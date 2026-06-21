@@ -1286,7 +1286,7 @@
     } catch { pastHTML = ''; }
 
     container.innerHTML = `
-      <div class="events-label">Aankomende concerten</div>
+      <div class="events-label">Upcoming Concerts</div>
       ${upHTML}
       ${pastHTML ? `
       <div class="events-archive">
@@ -1297,7 +1297,7 @@
           body.style.display = open ? 'none' : 'block';
           svg.style.transform = open ? '' : 'rotate(180deg)';
         ">
-          <span>Afgelopen concerten &nbsp;<em style='font-style:normal;font-weight:400;opacity:.6'>${pastCount}+ evenementen</em></span>
+          <span>Past Concerts &nbsp;<em style='font-style:normal;font-weight:400;opacity:.6'>${pastCount}+ evenementen</em></span>
           <svg id="archiveArrow" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </button>
         <div id="archiveBody" class="events-archive-body" style="display:none">
