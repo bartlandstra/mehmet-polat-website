@@ -1375,43 +1375,35 @@
       upHTML = '<p class="events-empty">Could not load upcoming concerts.</p>';
     }
 
-    /* 2. Past events – Bandsintown */
+    /* 2. Past events – scrape WordPress Events Manager via CORS proxy */
     let pastEvents = [];
-    try {
-      const past = await fetch('https://rest.bandsintown.com/artists/ID_3811736/events?app_id=js_widget&date=past').then(r => r.json());
-      if (Array.isArray(past) && past.length) {
-        pastEvents = past.map(e => {
-          const d    = new Date(e.datetime);
-          const day  = String(d.getDate()).padStart(2, '0');
-          const mo   = MO[d.getMonth()];
-          const year = String(d.getFullYear());
-          const h    = d.getHours(), m = String(d.getMinutes()).padStart(2, '0');
-          const time = h ? `${String(h).padStart(2, '0')}:${m}` : '';
-          const venue = [e.venue?.name, e.venue?.city, e.venue?.country].filter(Boolean).join(', ');
-          const ticket = e.offers?.[0]?.url;
-          const href   = ticket || `https://www.bandsintown.com/e/${e.id}`;
-          return { day, mo, year, title: e.title || '', venue, time, href };
-        });
-      }
-    } catch {}
+    const wpPastUrl = 'https://mehmetpolat.net/events/?scope=past';
+    const proxies   = [
+      'https://corsproxy.io/?' + encodeURIComponent(wpPastUrl),
+      'https://api.allorigins.win/raw?url=' + encodeURIComponent(wpPastUrl),
+    ];
 
-    /* 3. Fallback: scrape via CORS proxy (direct cross-origin fetch is blocked) */
-    if (!pastEvents.length) {
+    function parseWpEvents(html) {
+      const doc   = new DOMParser().parseFromString(html, 'text/html');
+      return [...doc.querySelectorAll('.em-event.em-item')].map(item => {
+        const day   = item.querySelector('.day')?.textContent.trim() || '—';
+        const mo    = item.querySelector('.month')?.textContent.trim() || '';
+        const title = item.querySelector('.em-item-title a')?.textContent.trim() || '';
+        const href  = item.querySelector('.em-item-title a')?.getAttribute('href') || '#';
+        const time  = item.querySelector('.em-event-time')?.textContent.replace(/\s+/g, ' ').trim() || '';
+        const venue = item.querySelector('.em-event-location')?.textContent.replace(/\s+/g, ' ').trim() || '';
+        const timeEl = item.querySelector('time[datetime]');
+        const year  = (href.match(/\/(\d{4})\//) || timeEl?.getAttribute('datetime')?.match(/^(\d{4})/) || [])[1] || '';
+        return { day, mo, year, title, venue, time, href };
+      });
+    }
+
+    for (const proxyUrl of proxies) {
       try {
-        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://mehmetpolat.net/events/');
-        const wpHtml  = await fetch(proxyUrl).then(r => r.text());
-        const doc     = new DOMParser().parseFromString(wpHtml, 'text/html');
-        pastEvents    = [...doc.querySelectorAll('.em-event.em-item')].map(item => {
-          const day   = item.querySelector('.day')?.textContent.trim() || '—';
-          const mo    = item.querySelector('.month')?.textContent.trim() || '';
-          const title = item.querySelector('.em-item-title a')?.textContent.trim() || '';
-          const href  = item.querySelector('.em-item-title a')?.getAttribute('href') || '#';
-          const time  = item.querySelector('.em-event-time')?.textContent.replace(/\s+/g, ' ').trim() || '';
-          const venue = item.querySelector('.em-event-location')?.textContent.replace(/\s+/g, ' ').trim() || '';
-          const timeEl = item.querySelector('time[datetime]');
-          const year  = (href.match(/\/(\d{4})\//) || timeEl?.getAttribute('datetime')?.match(/^(\d{4})/) || [])[1] || '';
-          return { day, mo, year, title, venue, time, href };
-        });
+        const res  = await fetch(proxyUrl);
+        if (!res.ok) continue;
+        const evts = parseWpEvents(await res.text());
+        if (evts.length) { pastEvents = evts; break; }
       } catch {}
     }
 
