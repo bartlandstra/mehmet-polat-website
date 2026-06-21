@@ -1707,7 +1707,7 @@
               <tr class="archive-row">
                 <td class="archive-date">${esc(e.day)}&nbsp;${esc(e.mo)}${e.year ? `<br><span style="font-size:.68rem;color:var(--text-subtle);letter-spacing:.04em">${esc(e.year)}</span>` : ''}</td>
                 <td class="archive-title"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a></td>
-                <td class="archive-venue archive-hide-sm">${esc(e.venue)}</td>
+                <td class="archive-venue archive-hide-sm">${esc(e.venue)}${e.place ? `<br><span style="font-size:.75em;opacity:.65">${esc(e.place)}</span>` : ''}</td>
                 <td class="archive-time archive-hide-sm">${esc(e.time)}</td>
                 <td class="archive-action"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer" class="archive-link">${esc(t('events.info'))} →</a></td>
               </tr>
@@ -1730,7 +1730,7 @@
     const archiveBodyInner = pastHTML || `
       <p class="events-empty" style="text-align:center">
         ${esc(t('events.archiveFallback'))}<br>
-        <a href="https://mehmetpolat.net/events/" target="_blank" rel="noopener noreferrer"
+        <a href="https://www.bandsintown.com/a/3811736-mehmet-polat" target="_blank" rel="noopener noreferrer"
            class="archive-link" style="display:inline-block;margin-top:14px">${esc(t('events.viewFull'))}</a>
       </p>`;
     const archiveCountLabel = pastEvents.length ? String(pastEvents.length) : esc(t('events.viewArchive'));
@@ -1780,59 +1780,33 @@
       upError = true; upcoming = [];
     }
 
-    /* 2. Past events – scrape WordPress Events Manager.
-          mehmetpolat.net has no CORS headers, so a browser can't fetch it
-          directly. Primary source is our own same-origin Cloudflare Pages
-          Function (/api/events), which fetches the archive server-side.
-          Public CORS proxies remain as fallbacks if the function is
-          unavailable (e.g. local file preview). */
-    const wpUrl   = 'https://mehmetpolat.net/events/';
-    const sources = [
-      () => fetch('/api/events'),                                              /* same-origin edge function */
-      () => fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(wpUrl)),
-      () => fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(wpUrl + '?scope=past')),
-      () => fetch('https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(wpUrl)),
-      () => fetch('https://corsproxy.io/?url=' + encodeURIComponent(wpUrl)),
-    ];
-
-    function parseWpEvents(html) {
-      const doc   = new DOMParser().parseFromString(html, 'text/html');
-      const items = [...doc.querySelectorAll('.em-event.em-item, .em-item, li.em-event, .event-listing .event')];
-      return items.map(item => {
-        const day   = item.querySelector('.day')?.textContent.trim() || '—';
-        const mo    = item.querySelector('.month')?.textContent.trim() || '';
-        const link  = item.querySelector('.em-item-title a, .em-event-title a, h3 a, a');
-        const title = link?.textContent.trim() || '';
-        const href  = link?.getAttribute('href') || '#';
-        const time  = item.querySelector('.em-event-time, .time')?.textContent.replace(/\s+/g, ' ').trim() || '';
-        const venue = item.querySelector('.em-event-location, .location, .em-event-location-name')?.textContent.replace(/\s+/g, ' ').trim() || '';
-
-        /* Year: try every common Events Manager source in order */
-        const yearSpan   = item.querySelector('.year');
-        const abbr       = item.querySelector('abbr.dtstart, abbr[title]');
-        const dtTitle    = abbr?.getAttribute('title') || '';
-        const timeEl     = item.querySelector('time[datetime]');
-        const year =
-          yearSpan?.textContent.trim() ||
-          dtTitle.slice(0, 4) ||
-          timeEl?.getAttribute('datetime')?.slice(0, 4) ||
-          href.match(/\/(\d{4})\//)?.[1] ||
-          '';
-        return { day, mo, year, title, venue, time, href };
-      }).filter(e => e.title);
-    }
-
-    const seen = new Set();
-    for (const get of sources) {
-      try {
-        const res = await get();
-        if (!res.ok) continue;
-        parseWpEvents(await res.text()).forEach(e => {
-          if (!seen.has(e.href)) { seen.add(e.href); pastEvents.push(e); }
+    /* 2. Past events – Bandsintown API (same origin and CORS as upcoming) */
+    try {
+      const pastEvs = await fetch(
+        'https://rest.bandsintown.com/artists/ID_3811736/events?app_id=js_widget&date=past'
+      ).then(r => r.json());
+      if (Array.isArray(pastEvs)) {
+        pastEvents = pastEvs.map(e => {
+          const d    = new Date(e.datetime);
+          const day  = String(d.getDate()).padStart(2, '0');
+          const mo   = MO[d.getMonth()];
+          const year = String(d.getFullYear());
+          const h    = d.getHours(), mm = String(d.getMinutes()).padStart(2, '0');
+          const time = h ? `${String(h).padStart(2,'0')}:${mm}` : '';
+          const venue = e.venue?.name || '';
+          const place = [e.venue?.city, e.venue?.country].filter(Boolean).join(', ');
+          const href  = e.url || `https://www.bandsintown.com/e/${e.id}`;
+          const title = e.title || venue || 'Concert';
+          return { day, mo, year, title, venue, place, time, href };
         });
-        if (pastEvents.length) break;   /* stop at first source that works */
-      } catch (e2) { /* try next source */ }
-    }
+        const moIdx = m => MO.indexOf(m);
+        pastEvents.sort((a, b) =>
+          b.year.localeCompare(a.year) ||
+          moIdx(b.mo) - moIdx(a.mo)   ||
+          Number(b.day) - Number(a.day)
+        );
+      }
+    } catch { /* pastEvents remains [] */ }
 
     eventsLoaded = true;
     paintEvents();
