@@ -707,6 +707,11 @@
       section { padding: 72px 20px; }
       .albums-grid { grid-template-columns: repeat(2,1fr); gap: 22px; }
     }
+
+    /* ─── EVENTS (Bandsintown) ─── */
+    #events { background: var(--bg-light); }
+    .bit-widget-container { margin-top: 52px; }
+    .events-actions { margin-top: 44px; display: flex; gap: 14px; flex-wrap: wrap; }
   </style>
 </head>
 <body>
@@ -718,6 +723,7 @@
   <a href="#projects"    onclick="closeMobile()">Projects</a>
   <a href="#discography" onclick="closeMobile()">Albums</a>
   <a href="#listen"      onclick="closeMobile()">Listen</a>
+  <a href="#events"      onclick="closeMobile()">Events</a>
   <a href="#contact"     onclick="closeMobile()">Contact</a>
 </div>
 
@@ -730,6 +736,7 @@
     <li><a href="#projects">Projects</a></li>
     <li><a href="#discography">Albums</a></li>
     <li><a href="#listen">Listen</a></li>
+    <li><a href="#events">Events</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 
@@ -1004,6 +1011,40 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════ EVENTS ═══════════════════════════════ -->
+<section id="events">
+  <div class="wrap">
+    <div class="eyebrow fi"><span>On Tour</span></div>
+    <h2 class="section-title fi delay-1">Upcoming <em>Concerts</em></h2>
+    <div class="rule fi delay-1"></div>
+    <p class="fi delay-2" style="color:var(--text-muted);max-width:620px;margin-bottom:0;line-height:1.82;">
+      Mehmet Polat performs internationally — from intimate jazz clubs to major festivals across Europe and beyond.
+    </p>
+
+    <div class="bit-widget-container fi delay-2">
+      <a class="bit-widget-initializer"
+         data-artist-name="Mehmet Polat"
+         data-display-limit="10"
+         data-link-color="#c9975a"
+         data-background-color="transparent"
+         data-separator-color="rgba(201,151,90,0.18)"
+         data-text-color="#f5ede0"
+         data-font="Inter"
+         data-auto-style="false"
+         data-language="en"
+         data-no-dates-title="No upcoming shows listed yet"
+         data-no-dates-description="Follow Mehmet on Bandsintown for the latest tour updates."
+         data-link-text-color="#c9975a">
+      </a>
+    </div>
+
+    <div class="events-actions fi delay-3">
+      <a href="https://www.bandsintown.com/a/15384023-mehmet-polat?came_from=267" target="_blank" class="btn btn-ghost">All events on Bandsintown ↗</a>
+      <a href="https://mehmetpolat.net/events/" target="_blank" class="btn btn-ghost">Full event archive ↗</a>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════════════════════════ CONTACT ═══════════════════════════════ -->
 <section id="contact">
   <div class="wrap">
@@ -1084,7 +1125,7 @@
     <a href="#discography">Albums</a>
     <a href="#listen">Listen</a>
     <a href="#contact">Contact</a>
-    <a href="https://mehmetpolat.net/events/" target="_blank">Events ↗</a>
+    <a href="#events">Events</a>
   </nav>
   <p class="footer-copy">© 2026 Mehmet Polat · Aftab Records · Amsterdam, The Netherlands</p>
 </footer>
@@ -1116,5 +1157,8 @@
   document.getElementById('mobileClose').onclick  = () => menu.classList.remove('open');
   function closeMobile() { menu.classList.remove('open'); }
 </script>
+
+<!-- Bandsintown widget -->
+<script src="https://widget.bandsintown.com/main.min.js" charset="utf-8"></script>
 </body>
 </html>
