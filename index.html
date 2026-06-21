@@ -1253,12 +1253,12 @@
           const body = this.nextElementSibling;
           const open = body.style.display !== 'none';
           body.style.display = open ? 'none' : 'block';
-          this.querySelector('svg').style.transform = open ? '' : 'rotate(180deg)';
+          this.querySelector('svg').style.transform = open ? 'rotate(180deg)' : '';
         ">
           <span>Afgelopen concerten <em style='color:var(--text-muted);font-style:normal;font-weight:400'>(${pastCount}+ evenementen)</em></span>
-          <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          <svg viewBox="0 0 24 24" stroke-width="1.5" style="transform:rotate(180deg)"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </button>
-        <div style="display:none">${pastHTML}</div>
+        <div>${pastHTML}</div>
       </div>` : ''}
     `;
   })();
