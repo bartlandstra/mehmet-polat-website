@@ -1291,7 +1291,10 @@
       <div class="contact-right fi delay-2">
         <h3 data-i18n="contact.send">Send a Message</h3>
         <div class="rule"></div>
-        <form action="https://mehmetpolat.net/contact/" method="POST" target="_blank">
+        <form action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="05fdb8ea-e76a-4775-b586-eeb5542af282">
+          <input type="hidden" name="subject" value="New message from mehmetpolat.net">
+          <input type="checkbox" name="botcheck" style="display:none">
           <div class="field">
             <label for="fname" data-i18n="form.name">Your Name</label>
             <input type="text" id="fname" name="your-name" placeholder="Your name" data-i18n-ph="form.namePh" required>
@@ -1308,7 +1311,8 @@
             <label for="fmsg" data-i18n="form.message">Message</label>
             <textarea id="fmsg" name="your-message" placeholder="Your message..." data-i18n-ph="form.messagePh"></textarea>
           </div>
-          <button type="submit" class="btn-submit" data-i18n="form.submit">Send Message</button>
+          <button type="submit" class="btn-submit" id="contactSubmit" data-i18n="form.submit">Send Message</button>
+          <p id="contactResult" style="margin-top:14px;display:none"></p>
         </form>
       </div>
 
@@ -1332,6 +1336,38 @@
 </footer>
 
 <script>
+  /* ── Contact form – Web3Forms AJAX ── */
+  document.querySelector('form[action="https://api.web3forms.com/submit"]')
+    ?.addEventListener('submit', async function(ev) {
+      ev.preventDefault();
+      const btn = document.getElementById('contactSubmit');
+      const msg = document.getElementById('contactResult');
+      btn.disabled = true;
+      btn.textContent = '…';
+      msg.style.display = 'none';
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          body: new FormData(this),
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.textContent = '✓ Message sent — Mehmet will get back to you shortly.';
+          msg.style.color = 'var(--accent)';
+          this.reset();
+        } else {
+          throw new Error(data.message || 'Unknown error');
+        }
+      } catch (err) {
+        msg.textContent = '✗ Something went wrong. Please try again or send an email directly.';
+        msg.style.color = '#e07070';
+      } finally {
+        msg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+      }
+    });
+
   /* ── Nav scroll ── */
   const nav = document.getElementById('mainNav');
   window.addEventListener('scroll', () => {
