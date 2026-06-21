@@ -1320,7 +1320,7 @@
       if (!events.length) return '';
       const byYear = {};
       events.forEach(e => {
-        const yr = e.year || 'Archive';
+        const yr = e.year || '—';
         if (!byYear[yr]) byYear[yr] = [];
         byYear[yr].push(e);
       });
@@ -1339,7 +1339,7 @@
             <tbody>
               ${byYear[yr].map(e => `
                 <tr class="archive-row">
-                  <td class="archive-date">${esc(e.day)}&nbsp;${esc(e.mo)}</td>
+                  <td class="archive-date">${esc(e.day)}&nbsp;${esc(e.mo)}${e.year ? `<br><span style="font-size:.68rem;color:var(--text-subtle);letter-spacing:.04em">${esc(e.year)}</span>` : ''}</td>
                   <td class="archive-title"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a></td>
                   <td class="archive-venue archive-hide-sm">${esc(e.venue)}</td>
                   <td class="archive-time archive-hide-sm">${esc(e.time)}</td>
@@ -1388,9 +1388,8 @@
     ];
 
     function parseWpEvents(html) {
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      /* Events Manager markup has varied across versions – match several. */
-      let items = [...doc.querySelectorAll('.em-event.em-item, .em-item, li.em-event, .event-listing .event')];
+      const doc   = new DOMParser().parseFromString(html, 'text/html');
+      const items = [...doc.querySelectorAll('.em-event.em-item, .em-item, li.em-event, .event-listing .event')];
       return items.map(item => {
         const day   = item.querySelector('.day')?.textContent.trim() || '—';
         const mo    = item.querySelector('.month')?.textContent.trim() || '';
@@ -1399,19 +1398,41 @@
         const href  = link?.getAttribute('href') || '#';
         const time  = item.querySelector('.em-event-time, .time')?.textContent.replace(/\s+/g, ' ').trim() || '';
         const venue = item.querySelector('.em-event-location, .location, .em-event-location-name')?.textContent.replace(/\s+/g, ' ').trim() || '';
-        const timeEl = item.querySelector('time[datetime]');
-        const year  = (href.match(/\/(\d{4})\//) || timeEl?.getAttribute('datetime')?.match(/^(\d{4})/) || [])[1] || '';
+
+        /* Year: try every common Events Manager source in order */
+        const yearSpan   = item.querySelector('.year');
+        const abbr       = item.querySelector('abbr.dtstart, abbr[title]');
+        const dtTitle    = abbr?.getAttribute('title') || '';          /* e.g. "20241215T200000" */
+        const timeEl     = item.querySelector('time[datetime]');
+        const year =
+          yearSpan?.textContent.trim() ||                              /* <span class="year">2024</span> */
+          dtTitle.slice(0, 4) ||                                       /* abbr title starts with YYYY */
+          timeEl?.getAttribute('datetime')?.slice(0, 4) ||            /* <time datetime="2024-12-15"> */
+          href.match(/\/(\d{4})\//)?.[1] ||                           /* URL /events/2024/12/... */
+          '';
         return { day, mo, year, title, venue, time, href };
       }).filter(e => e.title);
     }
 
+    /* Fetch from proxy. Also try ?scope=past to get the full historical
+       archive (default page may only show upcoming or recent events). */
+    const wpUrls = [wpUrl, wpUrl + '?scope=past'];
+    const seen   = new Set();
+
     for (const makeUrl of proxies) {
-      try {
-        const res = await fetch(makeUrl(wpUrl));
-        if (!res.ok) continue;
-        const evts = parseWpEvents(await res.text());
-        if (evts.length) { pastEvents = evts; break; }
-      } catch (err) { /* try next proxy */ }
+      for (const u of wpUrls) {
+        try {
+          const res  = await fetch(makeUrl(u));
+          if (!res.ok) continue;
+          const evts = parseWpEvents(await res.text()).filter(e => {
+            if (seen.has(e.href)) return false;
+            seen.add(e.href);
+            return true;
+          });
+          pastEvents.push(...evts);
+        } catch { /* try next */ }
+      }
+      if (pastEvents.length) break;   /* stop after first working proxy */
     }
 
     const pastHTML  = archiveTable(pastEvents);
