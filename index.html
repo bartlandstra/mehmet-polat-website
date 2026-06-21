@@ -861,6 +861,60 @@
     }
     .archive-link:hover { color: var(--accent); border-color: var(--accent); }
     @media (max-width: 600px) { .archive-hide-sm { display: none; } }
+
+    /* ─── LANGUAGE SWITCHER ─── */
+    .lang-switch { position: relative; }
+    .lang-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: none; border: 1px solid var(--border); cursor: pointer;
+      color: var(--text-muted); padding: 7px 11px; border-radius: 3px;
+      font-family: 'Inter', sans-serif; font-size: .72rem; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase; transition: color .2s, border-color .2s;
+    }
+    .lang-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .lang-btn svg { width: 15px; height: 15px; display: block; }
+    .lang-caret { width: 11px !important; height: 11px !important; transition: transform .25s; }
+    .lang-switch.open .lang-caret { transform: rotate(180deg); }
+    .lang-menu {
+      position: absolute; top: calc(100% + 8px); right: 0;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 5px; list-style: none; padding: 6px;
+      min-width: 168px; box-shadow: 0 14px 40px rgba(0,0,0,.5);
+      opacity: 0; visibility: hidden; transform: translateY(-6px);
+      transition: opacity .2s, transform .2s, visibility .2s; z-index: 300;
+    }
+    .lang-switch.open .lang-menu { opacity: 1; visibility: visible; transform: none; }
+    .lang-menu li { margin: 0; }
+    .lang-menu button {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      background: none; border: none; cursor: pointer; text-align: left;
+      color: var(--text-muted); padding: 9px 12px; border-radius: 3px;
+      font-family: 'Inter', sans-serif; font-size: .82rem; font-weight: 500;
+      transition: background .18s, color .18s;
+    }
+    .lang-menu button:hover { background: rgba(201,151,90,.08); color: var(--text); }
+    .lang-menu button .lang-code {
+      font-size: .62rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--text-subtle); font-weight: 600;
+    }
+    .lang-menu button.active { color: var(--accent); }
+    .lang-menu button.active .lang-code { color: var(--accent-muted); }
+    /* Mobile language row inside the fullscreen menu */
+    .mobile-lang { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 320px; margin-top: 12px; }
+    .mobile-lang button {
+      background: none; border: 1px solid var(--border); cursor: pointer;
+      color: var(--text-muted); padding: 8px 16px; border-radius: 3px;
+      font-family: 'Inter', sans-serif; font-size: .8rem; font-weight: 500;
+      letter-spacing: .08em; transition: color .2s, border-color .2s;
+    }
+    .mobile-lang button:hover, .mobile-lang button.active { color: var(--accent); border-color: var(--accent); }
+    @media (max-width: 960px) {
+      .lang-btn { padding: 6px 9px; }
+    }
+    @media (max-width: 380px) {
+      #mainNav { padding: 0 16px; }
+      .lang-btn span:not(.lang-code) { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -868,12 +922,13 @@
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <button class="mobile-close" id="mobileClose">✕</button>
-  <a href="#about"       onclick="closeMobile()">Bio</a>
-  <a href="#projects"    onclick="closeMobile()">Projects</a>
-  <a href="#discography" onclick="closeMobile()">Albums</a>
-  <a href="#listen"      onclick="closeMobile()">Listen</a>
-  <a href="#events"      onclick="closeMobile()">Events</a>
-  <a href="#contact"     onclick="closeMobile()">Contact</a>
+  <a href="#about"       onclick="closeMobile()" data-i18n="nav.bio">Bio</a>
+  <a href="#projects"    onclick="closeMobile()" data-i18n="nav.projects">Projects</a>
+  <a href="#discography" onclick="closeMobile()" data-i18n="nav.albums">Albums</a>
+  <a href="#listen"      onclick="closeMobile()" data-i18n="nav.listen">Listen</a>
+  <a href="#events"      onclick="closeMobile()" data-i18n="nav.events">Events</a>
+  <a href="#contact"     onclick="closeMobile()" data-i18n="nav.contact">Contact</a>
+  <div class="mobile-lang" id="mobileLang"></div>
 </div>
 
 <!-- Navigation -->
@@ -881,12 +936,12 @@
   <a href="#hero" class="nav-logo">Mehmet <em>Polat</em></a>
 
   <ul class="nav-links">
-    <li><a href="#about">Bio</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#discography">Albums</a></li>
-    <li><a href="#listen">Listen</a></li>
-    <li><a href="#events">Events</a></li>
-    <li><a href="#contact">Contact</a></li>
+    <li><a href="#about" data-i18n="nav.bio">Bio</a></li>
+    <li><a href="#projects" data-i18n="nav.projects">Projects</a></li>
+    <li><a href="#discography" data-i18n="nav.albums">Albums</a></li>
+    <li><a href="#listen" data-i18n="nav.listen">Listen</a></li>
+    <li><a href="#events" data-i18n="nav.events">Events</a></li>
+    <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
   </ul>
 
   <div class="nav-social">
@@ -908,6 +963,17 @@
     </a>
   </div>
 
+  <div class="lang-switch" id="langSwitch">
+    <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false" aria-label="Language">
+      <svg viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" fill="none">
+        <circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.5 4 5.9 4 9.5s-1.4 7-4 9.5c-2.6-2.5-4-5.9-4-9.5s1.4-7 4-9.5z"/>
+      </svg>
+      <span id="langCur">EN</span>
+      <svg class="lang-caret" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" fill="none"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+    </button>
+    <ul class="lang-menu" id="langMenu"></ul>
+  </div>
+
   <button class="hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -922,12 +988,12 @@
 
   <!-- Right: text panel -->
   <div class="hero-panel">
-    <div class="hero-eyebrow">Amsterdam · The Netherlands</div>
+    <div class="hero-eyebrow" data-i18n="hero.location">Amsterdam · The Netherlands</div>
     <h1 class="hero-title">Mehmet<br>Polat</h1>
-    <p class="hero-sub">Master Ud Player<br>Composer &nbsp;·&nbsp; Teacher</p>
+    <p class="hero-sub" data-i18n="hero.sub">Master Ud Player<br>Composer &nbsp;·&nbsp; Teacher</p>
     <div class="hero-cta">
-      <a href="#about"  class="btn btn-fill">Discover</a>
-      <a href="#listen" class="btn btn-ghost">Listen Now</a>
+      <a href="#about"  class="btn btn-fill" data-i18n="hero.discover">Discover</a>
+      <a href="#listen" class="btn btn-ghost" data-i18n="hero.listen">Listen Now</a>
     </div>
   </div>
 
@@ -943,15 +1009,15 @@
   <div class="wrap">
     <div class="about-grid">
       <div class="about-body">
-        <div class="eyebrow fi"><span>About</span></div>
-        <h2 class="section-title fi delay-1">A Voice Between<br><em>Worlds</em></h2>
+        <div class="eyebrow fi"><span data-i18n="about.eyebrow">About</span></div>
+        <h2 class="section-title fi delay-1" data-i18n="about.title">A Voice Between<br><em>Worlds</em></h2>
         <div class="rule fi delay-2"></div>
         <div class="fi delay-2">
-          <p>Mehmet Polat is a master ud player, composer, ensemble leader and soloist who tours internationally. From Africa to India, Persia to the Balkans, Contemporary to Jazz, he has been combining various musical genres with his Alevi Spiritual, Anatolian Folk and Ottoman classical music background.</p>
-          <p>Through his improvisations, compositions and his own take on a variety of musical styles, Mehmet is constantly searching for new musical paths and inspiration. After many years of research, he invented his own left-hand technique to advance beyond the limitations of his traditional instrument — enabling more advanced and modern pieces.</p>
-          <p>He has also designed a ud with two extra bass strings to broaden the range and function of his instrument, a testament to his lifelong commitment to evolving the art form while honoring its ancient roots.</p>
+          <p data-i18n="about.p1">Mehmet Polat is a master ud player, composer, ensemble leader and soloist who tours internationally. From Africa to India, Persia to the Balkans, Contemporary to Jazz, he has been combining various musical genres with his Alevi Spiritual, Anatolian Folk and Ottoman classical music background.</p>
+          <p data-i18n="about.p2">Through his improvisations, compositions and his own take on a variety of musical styles, Mehmet is constantly searching for new musical paths and inspiration. After many years of research, he invented his own left-hand technique to advance beyond the limitations of his traditional instrument — enabling more advanced and modern pieces.</p>
+          <p data-i18n="about.p3">He has also designed a ud with two extra bass strings to broaden the range and function of his instrument, a testament to his lifelong commitment to evolving the art form while honoring its ancient roots.</p>
           <p style="margin-top:32px;">
-            <a href="#discography" class="btn btn-fill">Explore Albums</a>
+            <a href="#discography" class="btn btn-fill" data-i18n="about.explore">Explore Albums</a>
           </p>
         </div>
       </div>
@@ -971,7 +1037,7 @@
 <section id="quote">
   <div class="quote-block fi">
     <span class="quote-mark">"</span>
-    <p class="quote-body">Mehmet Polat is a wonderful musician: an open eye and ear for everything and everyone...</p>
+    <p class="quote-body" data-i18n="quote.body">Mehmet Polat is a wonderful musician: an open eye and ear for everything and everyone...</p>
     <p class="quote-attr">Dani Heyvaert — Rootstime.be</p>
   </div>
 </section>
@@ -979,8 +1045,8 @@
 <!-- ═══════════════════════════════ PROJECTS ═══════════════════════════════ -->
 <section id="projects">
   <div class="wrap">
-    <div class="eyebrow fi"><span>Current Project</span></div>
-    <h2 class="section-title fi delay-1">The <em>Quartet</em></h2>
+    <div class="eyebrow fi"><span data-i18n="projects.eyebrow">Current Project</span></div>
+    <h2 class="section-title fi delay-1" data-i18n="projects.title">The <em>Quartet</em></h2>
     <div class="rule fi delay-1"></div>
 
     <div class="quartet-card fi delay-2">
@@ -990,15 +1056,15 @@
       </div>
       <div class="quartet-body">
         <h3>Mehmet Polat Quartet</h3>
-        <p>Ud player and composer Mehmet Polat brings on board three virtuosos of jazz and world music to form his quartet — a group that blends jazz with rich musical traditions spanning the Middle East, Africa, India, Europe, and the Balkans.</p>
-        <p>The crossover-inspired compositions spring into existence through contemplation, experiments, emotions, adventure and virtuosity. Polat finds freedom in complex 'odd meters' like 5/4, 7/4 and 9/8 found in non-Western music, creating a sonic landscape where East and West dissolve into each other.</p>
+        <p data-i18n="projects.p1">Ud player and composer Mehmet Polat brings on board three virtuosos of jazz and world music to form his quartet — a group that blends jazz with rich musical traditions spanning the Middle East, Africa, India, Europe, and the Balkans.</p>
+        <p data-i18n="projects.p2">The crossover-inspired compositions spring into existence through contemplation, experiments, emotions, adventure and virtuosity. Polat finds freedom in complex 'odd meters' like 5/4, 7/4 and 9/8 found in non-Western music, creating a sonic landscape where East and West dissolve into each other.</p>
         <div class="member-list">
-          <div class="member-row"><div class="member-dot"></div><strong>Mehmet Polat</strong><span>Ud & Compositions</span></div>
-          <div class="member-row"><div class="member-dot"></div><strong>Franz von Chossy</strong><span>Piano</span></div>
-          <div class="member-row"><div class="member-dot"></div><strong>Daniel van Huffelen</strong><span>Double Bass</span></div>
-          <div class="member-row"><div class="member-dot"></div><strong>Martin Hafizi</strong><span>Drums</span></div>
+          <div class="member-row"><div class="member-dot"></div><strong>Mehmet Polat</strong><span data-i18n="role.ud">Ud & Compositions</span></div>
+          <div class="member-row"><div class="member-dot"></div><strong>Franz von Chossy</strong><span data-i18n="role.piano">Piano</span></div>
+          <div class="member-row"><div class="member-dot"></div><strong>Daniel van Huffelen</strong><span data-i18n="role.bass">Double Bass</span></div>
+          <div class="member-row"><div class="member-dot"></div><strong>Martin Hafizi</strong><span data-i18n="role.drums">Drums</span></div>
         </div>
-        <a href="#listen" class="btn btn-fill">Listen to the Quartet</a>
+        <a href="#listen" class="btn btn-fill" data-i18n="projects.listen">Listen to the Quartet</a>
       </div>
     </div>
   </div>
@@ -1007,10 +1073,10 @@
 <!-- ═══════════════════════════════ DISCOGRAPHY ═══════════════════════════════ -->
 <section id="discography">
   <div class="wrap">
-    <div class="eyebrow fi"><span>Discography</span></div>
-    <h2 class="section-title fi delay-1">Seven Albums of<br><em>Musical Journeys</em></h2>
+    <div class="eyebrow fi"><span data-i18n="disco.eyebrow">Discography</span></div>
+    <h2 class="section-title fi delay-1" data-i18n="disco.title">Seven Albums of<br><em>Musical Journeys</em></h2>
     <div class="rule fi delay-1"></div>
-    <p class="fi delay-2" style="color:var(--text-muted);max-width:620px;margin-bottom:52px;line-height:1.82;">From the debut trio album <em>Next Spring</em> to the latest <em>Roots in Motion</em>, each record represents a chapter in a lifelong exploration of music without borders.</p>
+    <p class="fi delay-2" data-i18n="disco.intro" style="color:var(--text-muted);max-width:620px;margin-bottom:52px;line-height:1.82;">From the debut trio album <em>Next Spring</em> to the latest <em>Roots in Motion</em>, each record represents a chapter in a lifelong exploration of music without borders.</p>
 
     <div class="albums-grid">
 
@@ -1119,8 +1185,8 @@
 <!-- ═══════════════════════════════ LISTEN ═══════════════════════════════ -->
 <section id="listen">
   <div class="wrap">
-    <div class="eyebrow fi" style="justify-content:center"><span>Listen</span></div>
-    <h2 class="section-title fi delay-1" style="text-align:center">Stream <em>the Music</em></h2>
+    <div class="eyebrow fi" style="justify-content:center"><span data-i18n="listen.eyebrow">Listen</span></div>
+    <h2 class="section-title fi delay-1" style="text-align:center" data-i18n="listen.title">Stream <em>the Music</em></h2>
     <div class="rule fi delay-1" style="margin-left:auto;margin-right:auto"></div>
     <div class="spotify-wrap fi delay-2">
       <iframe
@@ -1163,19 +1229,19 @@
 <!-- ═══════════════════════════════ EVENTS ═══════════════════════════════ -->
 <section id="events">
   <div class="wrap">
-    <div class="eyebrow fi"><span>On Tour</span></div>
-    <h2 class="section-title fi delay-1">Concerts &amp; <em>Tour Dates</em></h2>
+    <div class="eyebrow fi"><span data-i18n="events.eyebrow">On Tour</span></div>
+    <h2 class="section-title fi delay-1" data-i18n="events.title">Concerts &amp; <em>Tour Dates</em></h2>
     <div class="rule fi delay-1"></div>
-    <p class="fi delay-2" style="color:var(--text-muted);max-width:620px;margin-bottom:0;line-height:1.82;">
+    <p class="fi delay-2" data-i18n="events.intro" style="color:var(--text-muted);max-width:620px;margin-bottom:0;line-height:1.82;">
       Mehmet Polat performs internationally — from intimate jazz clubs to major festivals across Europe and beyond.
     </p>
 
     <div id="events-list" class="fi delay-2">
-      <p class="events-empty">Loading events…</p>
+      <p class="events-empty" data-i18n="events.loading">Loading events…</p>
     </div>
 
     <div class="events-actions fi delay-3">
-      <a href="https://www.bandsintown.com/a/15384023-mehmet-polat" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Follow on Bandsintown ↗</a>
+      <a href="https://www.bandsintown.com/a/15384023-mehmet-polat" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" data-i18n="events.follow">Follow on Bandsintown ↗</a>
     </div>
   </div>
 </section>
@@ -1186,10 +1252,10 @@
     <div class="contact-grid">
 
       <div class="contact-left">
-        <div class="eyebrow fi"><span>Get in Touch</span></div>
-        <h2 class="section-title fi delay-1">Book &amp;<br><em>Connect</em></h2>
+        <div class="eyebrow fi"><span data-i18n="contact.eyebrow">Get in Touch</span></div>
+        <h2 class="section-title fi delay-1" data-i18n="contact.title">Book &amp;<br><em>Connect</em></h2>
         <div class="rule fi delay-1"></div>
-        <p class="fi delay-2">Available for concerts, festivals, collaborations, workshops and masterclasses. Touring internationally throughout Europe and beyond.</p>
+        <p class="fi delay-2" data-i18n="contact.p">Available for concerts, festivals, collaborations, workshops and masterclasses. Touring internationally throughout Europe and beyond.</p>
 
         <div class="contact-phone fi delay-2">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5">
@@ -1223,26 +1289,26 @@
       </div>
 
       <div class="contact-right fi delay-2">
-        <h3>Send a Message</h3>
+        <h3 data-i18n="contact.send">Send a Message</h3>
         <div class="rule"></div>
         <form action="https://mehmetpolat.net/contact/" method="POST" target="_blank">
           <div class="field">
-            <label for="fname">Your Name</label>
-            <input type="text" id="fname" name="your-name" placeholder="Your name" required>
+            <label for="fname" data-i18n="form.name">Your Name</label>
+            <input type="text" id="fname" name="your-name" placeholder="Your name" data-i18n-ph="form.namePh" required>
           </div>
           <div class="field">
-            <label for="femail">Email Address</label>
-            <input type="email" id="femail" name="your-email" placeholder="your@email.com" required>
+            <label for="femail" data-i18n="form.email">Email Address</label>
+            <input type="email" id="femail" name="your-email" placeholder="your@email.com" data-i18n-ph="form.emailPh" required>
           </div>
           <div class="field">
-            <label for="fsubject">Subject</label>
-            <input type="text" id="fsubject" name="your-subject" placeholder="Concert booking, collaboration...">
+            <label for="fsubject" data-i18n="form.subject">Subject</label>
+            <input type="text" id="fsubject" name="your-subject" placeholder="Concert booking, collaboration..." data-i18n-ph="form.subjectPh">
           </div>
           <div class="field">
-            <label for="fmsg">Message</label>
-            <textarea id="fmsg" name="your-message" placeholder="Your message..."></textarea>
+            <label for="fmsg" data-i18n="form.message">Message</label>
+            <textarea id="fmsg" name="your-message" placeholder="Your message..." data-i18n-ph="form.messagePh"></textarea>
           </div>
-          <button type="submit" class="btn-submit">Send Message</button>
+          <button type="submit" class="btn-submit" data-i18n="form.submit">Send Message</button>
         </form>
       </div>
 
@@ -1253,14 +1319,14 @@
 <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
 <footer>
   <div class="footer-logo">Mehmet <em>Polat</em></div>
-  <p class="footer-tagline">Master Ud Player · Composer · Teacher</p>
+  <p class="footer-tagline" data-i18n="footer.tagline">Master Ud Player · Composer · Teacher</p>
   <nav class="footer-links">
-    <a href="#about">Bio</a>
-    <a href="#projects">Projects</a>
-    <a href="#discography">Albums</a>
-    <a href="#listen">Listen</a>
-    <a href="#contact">Contact</a>
-    <a href="#events">Events</a>
+    <a href="#about" data-i18n="nav.bio">Bio</a>
+    <a href="#projects" data-i18n="nav.projects">Projects</a>
+    <a href="#discography" data-i18n="nav.albums">Albums</a>
+    <a href="#listen" data-i18n="nav.listen">Listen</a>
+    <a href="#contact" data-i18n="nav.contact">Contact</a>
+    <a href="#events" data-i18n="nav.events">Events</a>
   </nav>
   <p class="footer-copy">© 2026 Mehmet Polat · Aftab Records · Amsterdam, The Netherlands</p>
 </footer>
@@ -1292,72 +1358,412 @@
   document.getElementById('mobileClose').onclick  = () => menu.classList.remove('open');
   function closeMobile() { menu.classList.remove('open'); }
 
-  /* ── Events ── */
-  (async function initEvents() {
-    const container = document.getElementById('events-list');
-    if (!container) return;
-    const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  /* ─────────────────────────────────────────────────────────────
+     INTERNATIONALISATION
+     Auto-detects the visitor's browser language and translates the
+     page. A manual switcher (nav + mobile menu) overrides and the
+     choice is remembered in localStorage. English = source text in
+     the HTML; other languages come from the dictionary below.
+     ───────────────────────────────────────────────────────────── */
+  const LANGS = [
+    ['en','English','EN'],
+    ['nl','Nederlands','NL'],
+    ['de','Deutsch','DE'],
+    ['fr','Français','FR'],
+    ['es','Español','ES'],
+    ['it','Italiano','IT'],
+    ['tr','Türkçe','TR'],
+    ['zh','中文','中文'],
+  ];
+  const SUPPORTED = LANGS.map(l => l[0]);
 
-    function esc(s) {
-      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-    function safeHref(url) {
-      try { const u = new URL(url); return (u.protocol==='https:'||u.protocol==='http:') ? url : '#'; } catch { return '#'; }
-    }
+  /* English strings for JS-generated UI (events / archive) */
+  const EN_JS = {
+    'events.upcoming':'Upcoming concerts', 'events.past':'Past concerts',
+    'events.loading':'Loading events…', 'events.none':'No upcoming concerts scheduled.',
+    'events.error':'Could not load upcoming concerts.', 'events.tickets':'Tickets',
+    'events.info':'Info', 'events.viewArchive':'View archive',
+    'events.archiveFallback':'The full concert archive lives on the main site.',
+    'events.viewFull':'View full archive →',
+    'col.date':'Date', 'col.concert':'Concert', 'col.venue':'Venue', 'col.time':'Time',
+  };
 
-    /* Event row – full-width with venue in centre column */
-    function row(day, mo, title, place, time, href, cta) {
-      return `<a href="${safeHref(href)}" target="_blank" rel="noopener noreferrer" class="event-row">
-        <div class="event-badge"><span class="badge-day">${esc(day)}</span><span class="badge-mo">${esc(mo)}</span></div>
-        <div class="event-title">${esc(title)}</div>
-        <div class="event-place">${esc(place)}<span class="event-time">${esc(time)}</span></div>
-        <span class="event-cta">${esc(cta)}&nbsp;→</span>
-      </a>`;
-    }
+  const I18N = {
+    nl: {
+      'nav.bio':'Bio','nav.projects':'Projecten','nav.albums':'Albums','nav.listen':'Luisteren','nav.events':'Concerten','nav.contact':'Contact',
+      'hero.location':'Amsterdam · Nederland','hero.sub':'Meester ud-speler<br>Componist &nbsp;·&nbsp; Docent','hero.discover':'Ontdek','hero.listen':'Luister nu',
+      'about.eyebrow':'Over','about.title':'Een stem tussen<br><em>werelden</em>',
+      'about.p1':'Mehmet Polat is een meester ud-speler, componist, ensembleleider en solist die internationaal optreedt. Van Afrika tot India, van Perzië tot de Balkan, van hedendaags tot jazz — hij combineert uiteenlopende muziekgenres met zijn achtergrond in alevitische spirituele muziek, Anatolische volksmuziek en Ottomaanse klassieke muziek.',
+      'about.p2':'Door zijn improvisaties, composities en zijn eigen kijk op allerlei muziekstijlen is Mehmet voortdurend op zoek naar nieuwe muzikale paden en inspiratie. Na jaren onderzoek ontwikkelde hij zijn eigen linkerhandtechniek om voorbij de beperkingen van zijn traditionele instrument te gaan — waardoor geavanceerdere en modernere stukken mogelijk werden.',
+      'about.p3':'Daarnaast ontwierp hij een ud met twee extra bassnaren om het bereik en de mogelijkheden van zijn instrument te verbreden — een blijk van zijn levenslange toewijding om de kunstvorm te laten evolueren met respect voor haar eeuwenoude wortels.',
+      'about.explore':'Bekijk albums',
+      'quote.body':'Mehmet Polat is een geweldige muzikant: een open oog en oor voor alles en iedereen...',
+      'projects.eyebrow':'Huidig project','projects.title':'Het <em>Kwartet</em>',
+      'projects.p1':'Ud-speler en componist Mehmet Polat haalt drie virtuozen uit de jazz en wereldmuziek binnen voor zijn kwartet — een groep die jazz vermengt met rijke muziektradities uit het Midden-Oosten, Afrika, India, Europa en de Balkan.',
+      'projects.p2':'De crossover-geïnspireerde composities ontstaan door contemplatie, experiment, emotie, avontuur en virtuositeit. Polat vindt vrijheid in complexe oneven maatsoorten als 5/4, 7/4 en 9/8 uit niet-westerse muziek, en creëert zo een klanklandschap waarin Oost en West in elkaar overvloeien.',
+      'role.ud':'Ud & composities','role.piano':'Piano','role.bass':'Contrabas','role.drums':'Drums','projects.listen':'Luister naar het kwartet',
+      'disco.eyebrow':'Discografie','disco.title':'Zeven albums vol<br><em>muzikale reizen</em>',
+      'disco.intro':'Van het debuut-trioalbum <em>Next Spring</em> tot het meest recente <em>Roots in Motion</em> — elke plaat vormt een hoofdstuk in een levenslange ontdekkingsreis door muziek zonder grenzen.',
+      'listen.eyebrow':'Luisteren','listen.title':'Stream <em>de muziek</em>',
+      'events.eyebrow':'Op tournee','events.title':'Concerten &amp; <em>tourdata</em>',
+      'events.intro':'Mehmet Polat treedt internationaal op — van intieme jazzclubs tot grote festivals door heel Europa en daarbuiten.',
+      'events.follow':'Volg op Bandsintown ↗','events.upcoming':'Aankomende concerten','events.past':'Afgelopen concerten',
+      'events.loading':'Concerten laden…','events.none':'Geen aankomende concerten gepland.','events.error':'Aankomende concerten konden niet worden geladen.',
+      'events.tickets':'Tickets','events.info':'Info','events.viewArchive':'Bekijk archief','events.archiveFallback':'Het volledige concertarchief staat op de hoofdsite.','events.viewFull':'Bekijk volledig archief →',
+      'col.date':'Datum','col.concert':'Concert','col.venue':'Locatie','col.time':'Tijd',
+      'contact.eyebrow':'Neem contact op','contact.title':'Boeken &amp;<br><em>contact</em>',
+      'contact.p':'Beschikbaar voor concerten, festivals, samenwerkingen, workshops en masterclasses. Internationaal op tournee door Europa en daarbuiten.',
+      'contact.send':'Stuur een bericht','form.name':'Je naam','form.namePh':'Je naam','form.email':'E-mailadres','form.emailPh':'jouw@email.com','form.subject':'Onderwerp','form.subjectPh':'Concertboeking, samenwerking...','form.message':'Bericht','form.messagePh':'Je bericht...','form.submit':'Verstuur bericht',
+      'footer.tagline':'Meester ud-speler · Componist · Docent',
+    },
+    de: {
+      'nav.bio':'Bio','nav.projects':'Projekte','nav.albums':'Alben','nav.listen':'Hören','nav.events':'Konzerte','nav.contact':'Kontakt',
+      'hero.location':'Amsterdam · Niederlande','hero.sub':'Meister an der Ud<br>Komponist &nbsp;·&nbsp; Lehrer','hero.discover':'Entdecken','hero.listen':'Jetzt hören',
+      'about.eyebrow':'Über','about.title':'Eine Stimme zwischen<br><em>Welten</em>',
+      'about.p1':'Mehmet Polat ist ein Meister an der Ud, Komponist, Ensembleleiter und Solist, der international auftritt. Von Afrika bis Indien, von Persien bis zum Balkan, von Zeitgenössischem bis Jazz verbindet er verschiedenste Musikgenres mit seinem Hintergrund aus alevitischer spiritueller Musik, anatolischer Volksmusik und osmanischer klassischer Musik.',
+      'about.p2':'Durch seine Improvisationen, Kompositionen und seine eigene Interpretation unterschiedlichster Stile ist Mehmet ständig auf der Suche nach neuen musikalischen Wegen und Inspiration. Nach jahrelanger Forschung entwickelte er seine eigene Technik der linken Hand, um die Grenzen seines traditionellen Instruments zu überwinden — und so anspruchsvollere und modernere Stücke zu ermöglichen.',
+      'about.p3':'Außerdem entwarf er eine Ud mit zwei zusätzlichen Basssaiten, um den Tonumfang und die Möglichkeiten seines Instruments zu erweitern — ein Zeugnis seines lebenslangen Engagements, die Kunstform weiterzuentwickeln und zugleich ihre uralten Wurzeln zu ehren.',
+      'about.explore':'Alben entdecken',
+      'quote.body':'Mehmet Polat ist ein wunderbarer Musiker: ein offenes Auge und Ohr für alles und jeden...',
+      'projects.eyebrow':'Aktuelles Projekt','projects.title':'Das <em>Quartett</em>',
+      'projects.p1':'Ud-Spieler und Komponist Mehmet Polat holt drei Virtuosen aus Jazz und Weltmusik in sein Quartett — eine Gruppe, die Jazz mit den reichen Musiktraditionen des Nahen Ostens, Afrikas, Indiens, Europas und des Balkans verbindet.',
+      'projects.p2':'Die vom Crossover inspirierten Kompositionen entstehen durch Kontemplation, Experiment, Emotion, Abenteuer und Virtuosität. Polat findet Freiheit in komplexen ungeraden Taktarten wie 5/4, 7/4 und 9/8 aus nicht-westlicher Musik und schafft so eine Klanglandschaft, in der Ost und West ineinander verschmelzen.',
+      'role.ud':'Ud & Kompositionen','role.piano':'Klavier','role.bass':'Kontrabass','role.drums':'Schlagzeug','projects.listen':'Dem Quartett zuhören',
+      'disco.eyebrow':'Diskografie','disco.title':'Sieben Alben voller<br><em>musikalischer Reisen</em>',
+      'disco.intro':'Vom Debüt-Trioalbum <em>Next Spring</em> bis zum neuesten <em>Roots in Motion</em> — jede Platte ist ein Kapitel einer lebenslangen Erkundung der Musik ohne Grenzen.',
+      'listen.eyebrow':'Hören','listen.title':'Streame <em>die Musik</em>',
+      'events.eyebrow':'Auf Tour','events.title':'Konzerte &amp; <em>Tourdaten</em>',
+      'events.intro':'Mehmet Polat tritt international auf — von intimen Jazzclubs bis zu großen Festivals in ganz Europa und darüber hinaus.',
+      'events.follow':'Auf Bandsintown folgen ↗','events.upcoming':'Kommende Konzerte','events.past':'Vergangene Konzerte',
+      'events.loading':'Konzerte werden geladen…','events.none':'Keine kommenden Konzerte geplant.','events.error':'Kommende Konzerte konnten nicht geladen werden.',
+      'events.tickets':'Tickets','events.info':'Info','events.viewArchive':'Archiv ansehen','events.archiveFallback':'Das vollständige Konzertarchiv befindet sich auf der Hauptseite.','events.viewFull':'Vollständiges Archiv ansehen →',
+      'col.date':'Datum','col.concert':'Konzert','col.venue':'Ort','col.time':'Zeit',
+      'contact.eyebrow':'Kontakt aufnehmen','contact.title':'Buchen &amp;<br><em>verbinden</em>',
+      'contact.p':'Verfügbar für Konzerte, Festivals, Kooperationen, Workshops und Meisterklassen. International auf Tour in ganz Europa und darüber hinaus.',
+      'contact.send':'Eine Nachricht senden','form.name':'Ihr Name','form.namePh':'Ihr Name','form.email':'E-Mail-Adresse','form.emailPh':'ihre@email.com','form.subject':'Betreff','form.subjectPh':'Konzertbuchung, Zusammenarbeit...','form.message':'Nachricht','form.messagePh':'Ihre Nachricht...','form.submit':'Nachricht senden',
+      'footer.tagline':'Meister an der Ud · Komponist · Lehrer',
+    },
+    fr: {
+      'nav.bio':'Bio','nav.projects':'Projets','nav.albums':'Albums','nav.listen':'Écouter','nav.events':'Concerts','nav.contact':'Contact',
+      'hero.location':'Amsterdam · Pays-Bas','hero.sub':'Maître joueur d’oud<br>Compositeur &nbsp;·&nbsp; Professeur','hero.discover':'Découvrir','hero.listen':'Écouter',
+      'about.eyebrow':'À propos','about.title':'Une voix entre<br><em>les mondes</em>',
+      'about.p1':'Mehmet Polat est un maître joueur d’oud, compositeur, chef d’ensemble et soliste qui se produit dans le monde entier. De l’Afrique à l’Inde, de la Perse aux Balkans, du contemporain au jazz, il mêle les genres musicaux les plus divers à son héritage de musique spirituelle alévie, de musique folklorique anatolienne et de musique classique ottomane.',
+      'about.p2':'À travers ses improvisations, ses compositions et sa propre interprétation de styles variés, Mehmet est en quête constante de nouvelles voies musicales et d’inspiration. Après des années de recherche, il a inventé sa propre technique de la main gauche pour dépasser les limites de son instrument traditionnel — rendant possibles des pièces plus exigeantes et plus modernes.',
+      'about.p3':'Il a également conçu un oud doté de deux cordes de basse supplémentaires afin d’élargir la tessiture et les possibilités de son instrument — témoignage de son engagement de toute une vie à faire évoluer cet art tout en honorant ses racines ancestrales.',
+      'about.explore':'Découvrir les albums',
+      'quote.body':'Mehmet Polat est un musicien merveilleux : un œil et une oreille ouverts à tout et à tous...',
+      'projects.eyebrow':'Projet actuel','projects.title':'Le <em>Quartet</em>',
+      'projects.p1':'Joueur d’oud et compositeur, Mehmet Polat réunit trois virtuoses du jazz et des musiques du monde pour former son quartet — un groupe qui mêle le jazz aux riches traditions musicales du Moyen-Orient, d’Afrique, d’Inde, d’Europe et des Balkans.',
+      'projects.p2':'Les compositions d’inspiration crossover naissent de la contemplation, de l’expérimentation, de l’émotion, de l’aventure et de la virtuosité. Polat trouve la liberté dans des mesures impaires complexes comme 5/4, 7/4 et 9/8 issues des musiques non occidentales, créant un paysage sonore où l’Orient et l’Occident se fondent l’un dans l’autre.',
+      'role.ud':'Oud & compositions','role.piano':'Piano','role.bass':'Contrebasse','role.drums':'Batterie','projects.listen':'Écouter le quartet',
+      'disco.eyebrow':'Discographie','disco.title':'Sept albums de<br><em>voyages musicaux</em>',
+      'disco.intro':'Du premier album en trio <em>Next Spring</em> au plus récent <em>Roots in Motion</em>, chaque disque représente un chapitre d’une exploration musicale sans frontières menée toute une vie.',
+      'listen.eyebrow':'Écouter','listen.title':'Écouter <em>la musique</em>',
+      'events.eyebrow':'En tournée','events.title':'Concerts &amp; <em>dates de tournée</em>',
+      'events.intro':'Mehmet Polat se produit dans le monde entier — des clubs de jazz intimistes aux grands festivals à travers l’Europe et au-delà.',
+      'events.follow':'Suivre sur Bandsintown ↗','events.upcoming':'Concerts à venir','events.past':'Concerts passés',
+      'events.loading':'Chargement des concerts…','events.none':'Aucun concert à venir prévu.','events.error':'Impossible de charger les concerts à venir.',
+      'events.tickets':'Billets','events.info':'Infos','events.viewArchive':'Voir les archives','events.archiveFallback':'Les archives complètes des concerts se trouvent sur le site principal.','events.viewFull':'Voir toutes les archives →',
+      'col.date':'Date','col.concert':'Concert','col.venue':'Lieu','col.time':'Heure',
+      'contact.eyebrow':'Prendre contact','contact.title':'Réserver &amp;<br><em>échanger</em>',
+      'contact.p':'Disponible pour concerts, festivals, collaborations, ateliers et masterclasses. En tournée internationale à travers l’Europe et au-delà.',
+      'contact.send':'Envoyer un message','form.name':'Votre nom','form.namePh':'Votre nom','form.email':'Adresse e-mail','form.emailPh':'votre@email.com','form.subject':'Sujet','form.subjectPh':'Réservation de concert, collaboration...','form.message':'Message','form.messagePh':'Votre message...','form.submit':'Envoyer le message',
+      'footer.tagline':'Maître joueur d’oud · Compositeur · Professeur',
+    },
+    es: {
+      'nav.bio':'Bio','nav.projects':'Proyectos','nav.albums':'Álbumes','nav.listen':'Escuchar','nav.events':'Conciertos','nav.contact':'Contacto',
+      'hero.location':'Ámsterdam · Países Bajos','hero.sub':'Maestro del ud<br>Compositor &nbsp;·&nbsp; Profesor','hero.discover':'Descubrir','hero.listen':'Escuchar ahora',
+      'about.eyebrow':'Acerca de','about.title':'Una voz entre<br><em>mundos</em>',
+      'about.p1':'Mehmet Polat es un maestro del ud, compositor, líder de ensamble y solista que actúa por todo el mundo. De África a la India, de Persia a los Balcanes, de lo contemporáneo al jazz, combina los más diversos géneros musicales con su herencia de música espiritual aleví, música folclórica de Anatolia y música clásica otomana.',
+      'about.p2':'A través de sus improvisaciones, composiciones y su propia visión de estilos muy variados, Mehmet busca constantemente nuevos caminos musicales e inspiración. Tras años de investigación, inventó su propia técnica de mano izquierda para superar las limitaciones de su instrumento tradicional, haciendo posibles piezas más exigentes y modernas.',
+      'about.p3':'También diseñó un ud con dos cuerdas graves adicionales para ampliar el registro y las posibilidades de su instrumento, testimonio de su compromiso de toda una vida por hacer evolucionar este arte honrando sus antiguas raíces.',
+      'about.explore':'Explorar álbumes',
+      'quote.body':'Mehmet Polat es un músico maravilloso: un ojo y un oído abiertos a todo y a todos...',
+      'projects.eyebrow':'Proyecto actual','projects.title':'El <em>Cuarteto</em>',
+      'projects.p1':'El intérprete de ud y compositor Mehmet Polat reúne a tres virtuosos del jazz y la música del mundo para formar su cuarteto, un grupo que fusiona el jazz con las ricas tradiciones musicales de Oriente Medio, África, India, Europa y los Balcanes.',
+      'projects.p2':'Las composiciones de inspiración crossover nacen de la contemplación, la experimentación, la emoción, la aventura y el virtuosismo. Polat encuentra libertad en compases irregulares complejos como 5/4, 7/4 y 9/8 propios de la música no occidental, creando un paisaje sonoro donde Oriente y Occidente se funden.',
+      'role.ud':'Ud y composiciones','role.piano':'Piano','role.bass':'Contrabajo','role.drums':'Batería','projects.listen':'Escuchar al cuarteto',
+      'disco.eyebrow':'Discografía','disco.title':'Siete álbumes de<br><em>viajes musicales</em>',
+      'disco.intro':'Desde el álbum debut en trío <em>Next Spring</em> hasta el más reciente <em>Roots in Motion</em>, cada disco representa un capítulo de una exploración de toda una vida por una música sin fronteras.',
+      'listen.eyebrow':'Escuchar','listen.title':'Escucha <em>la música</em>',
+      'events.eyebrow':'De gira','events.title':'Conciertos &amp; <em>fechas de gira</em>',
+      'events.intro':'Mehmet Polat actúa internacionalmente, desde íntimos clubes de jazz hasta grandes festivales por toda Europa y más allá.',
+      'events.follow':'Seguir en Bandsintown ↗','events.upcoming':'Próximos conciertos','events.past':'Conciertos anteriores',
+      'events.loading':'Cargando conciertos…','events.none':'No hay próximos conciertos programados.','events.error':'No se pudieron cargar los próximos conciertos.',
+      'events.tickets':'Entradas','events.info':'Info','events.viewArchive':'Ver archivo','events.archiveFallback':'El archivo completo de conciertos está en el sitio principal.','events.viewFull':'Ver archivo completo →',
+      'col.date':'Fecha','col.concert':'Concierto','col.venue':'Lugar','col.time':'Hora',
+      'contact.eyebrow':'Ponte en contacto','contact.title':'Reservar &amp;<br><em>contactar</em>',
+      'contact.p':'Disponible para conciertos, festivales, colaboraciones, talleres y clases magistrales. De gira internacional por Europa y más allá.',
+      'contact.send':'Enviar un mensaje','form.name':'Tu nombre','form.namePh':'Tu nombre','form.email':'Correo electrónico','form.emailPh':'tu@email.com','form.subject':'Asunto','form.subjectPh':'Reserva de concierto, colaboración...','form.message':'Mensaje','form.messagePh':'Tu mensaje...','form.submit':'Enviar mensaje',
+      'footer.tagline':'Maestro del ud · Compositor · Profesor',
+    },
+    it: {
+      'nav.bio':'Bio','nav.projects':'Progetti','nav.albums':'Album','nav.listen':'Ascolta','nav.events':'Concerti','nav.contact':'Contatti',
+      'hero.location':'Amsterdam · Paesi Bassi','hero.sub':'Maestro di ud<br>Compositore &nbsp;·&nbsp; Insegnante','hero.discover':'Scopri','hero.listen':'Ascolta ora',
+      'about.eyebrow':'Chi è','about.title':'Una voce tra<br><em>i mondi</em>',
+      'about.p1':'Mehmet Polat è un maestro di ud, compositore, leader di ensemble e solista che si esibisce a livello internazionale. Dall’Africa all’India, dalla Persia ai Balcani, dal contemporaneo al jazz, unisce i più diversi generi musicali al suo background di musica spirituale alevita, musica popolare anatolica e musica classica ottomana.',
+      'about.p2':'Attraverso le sue improvvisazioni, le composizioni e la sua personale interpretazione di stili diversi, Mehmet è costantemente alla ricerca di nuove strade musicali e di ispirazione. Dopo anni di ricerca, ha inventato una propria tecnica della mano sinistra per superare i limiti del suo strumento tradizionale, rendendo possibili brani più complessi e moderni.',
+      'about.p3':'Ha inoltre progettato un ud con due corde di basso aggiuntive per ampliare l’estensione e le possibilità del suo strumento, testimonianza del suo impegno di una vita nel far evolvere quest’arte onorandone le antiche radici.',
+      'about.explore':'Esplora gli album',
+      'quote.body':'Mehmet Polat è un musicista meraviglioso: un occhio e un orecchio aperti a tutto e a tutti...',
+      'projects.eyebrow':'Progetto attuale','projects.title':'Il <em>Quartetto</em>',
+      'projects.p1':'Suonatore di ud e compositore, Mehmet Polat riunisce tre virtuosi del jazz e della world music per formare il suo quartetto, un gruppo che fonde il jazz con le ricche tradizioni musicali del Medio Oriente, dell’Africa, dell’India, dell’Europa e dei Balcani.',
+      'projects.p2':'Le composizioni di ispirazione crossover nascono dalla contemplazione, dalla sperimentazione, dall’emozione, dall’avventura e dal virtuosismo. Polat trova libertà in tempi dispari complessi come 5/4, 7/4 e 9/8 propri della musica non occidentale, creando un paesaggio sonoro in cui Oriente e Occidente si fondono.',
+      'role.ud':'Ud e composizioni','role.piano':'Pianoforte','role.bass':'Contrabbasso','role.drums':'Batteria','projects.listen':'Ascolta il quartetto',
+      'disco.eyebrow':'Discografia','disco.title':'Sette album di<br><em>viaggi musicali</em>',
+      'disco.intro':'Dall’album d’esordio in trio <em>Next Spring</em> al più recente <em>Roots in Motion</em>, ogni disco rappresenta un capitolo di un’esplorazione lunga una vita di una musica senza confini.',
+      'listen.eyebrow':'Ascolta','listen.title':'Ascolta <em>la musica</em>',
+      'events.eyebrow':'In tour','events.title':'Concerti &amp; <em>date del tour</em>',
+      'events.intro':'Mehmet Polat si esibisce a livello internazionale, dai jazz club intimi ai grandi festival in tutta Europa e oltre.',
+      'events.follow':'Segui su Bandsintown ↗','events.upcoming':'Prossimi concerti','events.past':'Concerti passati',
+      'events.loading':'Caricamento concerti…','events.none':'Nessun concerto in programma.','events.error':'Impossibile caricare i prossimi concerti.',
+      'events.tickets':'Biglietti','events.info':'Info','events.viewArchive':'Vedi archivio','events.archiveFallback':'L’archivio completo dei concerti si trova sul sito principale.','events.viewFull':'Vedi l’archivio completo →',
+      'col.date':'Data','col.concert':'Concerto','col.venue':'Luogo','col.time':'Ora',
+      'contact.eyebrow':'Mettiti in contatto','contact.title':'Prenota &amp;<br><em>contatta</em>',
+      'contact.p':'Disponibile per concerti, festival, collaborazioni, workshop e masterclass. In tour internazionale in tutta Europa e oltre.',
+      'contact.send':'Invia un messaggio','form.name':'Il tuo nome','form.namePh':'Il tuo nome','form.email':'Indirizzo e-mail','form.emailPh':'tua@email.com','form.subject':'Oggetto','form.subjectPh':'Prenotazione concerto, collaborazione...','form.message':'Messaggio','form.messagePh':'Il tuo messaggio...','form.submit':'Invia messaggio',
+      'footer.tagline':'Maestro di ud · Compositore · Insegnante',
+    },
+    tr: {
+      'nav.bio':'Biyografi','nav.projects':'Projeler','nav.albums':'Albümler','nav.listen':'Dinle','nav.events':'Konserler','nav.contact':'İletişim',
+      'hero.location':'Amsterdam · Hollanda','hero.sub':'Usta Ud Sanatçısı<br>Besteci &nbsp;·&nbsp; Eğitmen','hero.discover':'Keşfet','hero.listen':'Şimdi Dinle',
+      'about.eyebrow':'Hakkında','about.title':'Dünyalar arasında<br><em>bir ses</em>',
+      'about.p1':'Mehmet Polat; uluslararası sahnelerde yer alan usta bir ud sanatçısı, besteci, topluluk lideri ve solisttir. Afrika’dan Hindistan’a, İran’dan Balkanlar’a, çağdaş müzikten caza kadar pek çok türü; Alevi-Bektaşi, Anadolu halk müziği ve Osmanlı klasik müziği kökeniyle harmanlamaktadır.',
+      'about.p2':'Doğaçlamaları, besteleri ve farklı müzik türlerine kendine özgü yaklaşımıyla Mehmet, sürekli yeni müzikal yollar ve ilham arayışındadır. Uzun yıllar süren araştırmaların ardından, geleneksel çalgısının sınırlarını aşmak için kendi sol el tekniğini geliştirdi — böylece daha gelişmiş ve modern eserleri mümkün kıldı.',
+      'about.p3':'Ayrıca, çalgısının ses aralığını ve olanaklarını genişletmek için iki ek bas teli olan bir ud tasarladı; bu, kadim köklerine saygı gösterirken sanatı geliştirmeye adanmış bir ömrün kanıtıdır.',
+      'about.explore':'Albümleri Keşfet',
+      'quote.body':'Mehmet Polat harika bir müzisyen: her şeye ve herkese açık bir göz ve kulak...',
+      'projects.eyebrow':'Güncel Proje','projects.title':'<em>Dörtlü</em>',
+      'projects.p1':'Ud sanatçısı ve besteci Mehmet Polat, dörtlüsünü oluşturmak için caz ve dünya müziğinden üç virtüözü bir araya getiriyor — Orta Doğu, Afrika, Hindistan, Avrupa ve Balkanlar’ın zengin müzik geleneklerini cazla harmanlayan bir topluluk.',
+      'projects.p2':'Crossover esinli besteler; tefekkür, deney, duygu, macera ve virtüözlükle hayat buluyor. Polat, Batı dışı müzikteki 5/4, 7/4 ve 9/8 gibi karmaşık aksak ölçülerde özgürlük buluyor ve Doğu ile Batı’nın birbirine karıştığı bir ses dünyası yaratıyor.',
+      'role.ud':'Ud & Besteler','role.piano':'Piyano','role.bass':'Kontrbas','role.drums':'Davul','projects.listen':'Dörtlüyü Dinle',
+      'disco.eyebrow':'Diskografi','disco.title':'Yedi albümlük<br><em>müzikal yolculuk</em>',
+      'disco.intro':'İlk üçlü albümü <em>Next Spring</em>’den en yeni <em>Roots in Motion</em>’a kadar her kayıt, sınırsız müziğin ömür boyu süren keşfinde bir bölümü temsil ediyor.',
+      'listen.eyebrow':'Dinle','listen.title':'<em>Müziği</em> Dinle',
+      'events.eyebrow':'Turnede','events.title':'Konserler &amp; <em>Turne Tarihleri</em>',
+      'events.intro':'Mehmet Polat uluslararası sahnelerde yer alıyor — samimi caz kulüplerinden Avrupa ve ötesindeki büyük festivallere kadar.',
+      'events.follow':'Bandsintown’da Takip Et ↗','events.upcoming':'Yaklaşan konserler','events.past':'Geçmiş konserler',
+      'events.loading':'Konserler yükleniyor…','events.none':'Planlanmış yaklaşan konser yok.','events.error':'Yaklaşan konserler yüklenemedi.',
+      'events.tickets':'Biletler','events.info':'Bilgi','events.viewArchive':'Arşivi gör','events.archiveFallback':'Tüm konser arşivi ana sitede yer alıyor.','events.viewFull':'Tüm arşivi gör →',
+      'col.date':'Tarih','col.concert':'Konser','col.venue':'Mekan','col.time':'Saat',
+      'contact.eyebrow':'İletişime Geç','contact.title':'Rezervasyon &amp;<br><em>İletişim</em>',
+      'contact.p':'Konserler, festivaller, iş birlikleri, atölyeler ve ustalık sınıfları için müsait. Avrupa ve ötesinde uluslararası turnelerde.',
+      'contact.send':'Mesaj Gönder','form.name':'Adınız','form.namePh':'Adınız','form.email':'E-posta Adresi','form.emailPh':'sizin@email.com','form.subject':'Konu','form.subjectPh':'Konser rezervasyonu, iş birliği...','form.message':'Mesaj','form.messagePh':'Mesajınız...','form.submit':'Mesajı Gönder',
+      'footer.tagline':'Usta Ud Sanatçısı · Besteci · Eğitmen',
+    },
+    zh: {
+      'nav.bio':'简介','nav.projects':'项目','nav.albums':'专辑','nav.listen':'聆听','nav.events':'演出','nav.contact':'联系',
+      'hero.location':'阿姆斯特丹 · 荷兰','hero.sub':'乌德琴大师<br>作曲家 &nbsp;·&nbsp; 教师','hero.discover':'探索','hero.listen':'立即聆听',
+      'about.eyebrow':'关于','about.title':'跨越<br><em>世界</em>的声音',
+      'about.p1':'Mehmet Polat 是一位乌德琴大师、作曲家、乐团领奏者和独奏家，在世界各地巡演。从非洲到印度，从波斯到巴尔干，从当代音乐到爵士乐，他将各种音乐流派与自己的阿列维灵性音乐、安纳托利亚民间音乐和奥斯曼古典音乐背景融为一体。',
+      'about.p2':'通过即兴演奏、作曲以及对各种音乐风格的独特诠释，Mehmet 不断探寻新的音乐路径与灵感。经过多年钻研，他发明了自己独特的左手技巧，突破了传统乐器的局限——使更复杂、更现代的作品成为可能。',
+      'about.p3':'他还设计了一把带有两根额外低音弦的乌德琴，以拓宽乐器的音域与表现力——这正是他毕生致力于在尊重古老根源的同时推动这门艺术不断发展的见证。',
+      'about.explore':'浏览专辑',
+      'quote.body':'Mehmet Polat 是一位了不起的音乐家：对一切人和事都保持开放的眼睛与耳朵……',
+      'projects.eyebrow':'当前项目','projects.title':'<em>四重奏</em>',
+      'projects.p1':'乌德琴演奏家兼作曲家 Mehmet Polat 邀请三位爵士与世界音乐的演奏大师组成他的四重奏——一个将爵士乐与中东、非洲、印度、欧洲和巴尔干丰富音乐传统相融合的乐团。',
+      'projects.p2':'这些受跨界启发的作品，在沉思、实验、情感、冒险与精湛技艺中诞生。Polat 在非西方音乐中 5/4、7/4 和 9/8 等复杂的不规则节拍里找到自由，营造出东西方彼此交融的声音景观。',
+      'role.ud':'乌德琴 & 作曲','role.piano':'钢琴','role.bass':'低音提琴','role.drums':'鼓','projects.listen':'聆听四重奏',
+      'disco.eyebrow':'唱片目录','disco.title':'七张专辑的<br><em>音乐旅程</em>',
+      'disco.intro':'从首张三重奏专辑 <em>Next Spring</em> 到最新的 <em>Roots in Motion</em>，每一张唱片都是一段毕生探索无国界音乐的篇章。',
+      'listen.eyebrow':'聆听','listen.title':'在线聆听 <em>音乐</em>',
+      'events.eyebrow':'巡演中','events.title':'音乐会 &amp; <em>巡演日程</em>',
+      'events.intro':'Mehmet Polat 在世界各地演出——从亲密的爵士俱乐部到欧洲及更远地区的大型音乐节。',
+      'events.follow':'在 Bandsintown 关注 ↗','events.upcoming':'即将举行的演出','events.past':'往期演出',
+      'events.loading':'正在加载演出…','events.none':'暂无即将举行的演出。','events.error':'无法加载即将举行的演出。',
+      'events.tickets':'购票','events.info':'详情','events.viewArchive':'查看存档','events.archiveFallback':'完整的演出存档位于主网站。','events.viewFull':'查看完整存档 →',
+      'col.date':'日期','col.concert':'演出','col.venue':'场地','col.time':'时间',
+      'contact.eyebrow':'联系我们','contact.title':'预约 &amp;<br><em>联系</em>',
+      'contact.p':'可承接音乐会、音乐节、合作、工作坊及大师班。在欧洲及更远地区进行国际巡演。',
+      'contact.send':'发送消息','form.name':'您的姓名','form.namePh':'您的姓名','form.email':'电子邮箱','form.emailPh':'your@email.com','form.subject':'主题','form.subjectPh':'演出预约、合作……','form.message':'消息','form.messagePh':'您的留言……','form.submit':'发送消息',
+      'footer.tagline':'乌德琴大师 · 作曲家 · 教师',
+    },
+  };
 
-    /* Archive table grouped by year */
-    function archiveTable(events) {
-      if (!events.length) return '';
-      const byYear = {};
-      events.forEach(e => {
-        const yr = e.year || '—';
-        if (!byYear[yr]) byYear[yr] = [];
-        byYear[yr].push(e);
+  let currentLang = 'en';
+  let eventsLoaded = false;
+
+  function detectLang() {
+    try { const s = localStorage.getItem('lang'); if (s && SUPPORTED.includes(s)) return s; } catch (e) {}
+    const list = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'en'];
+    for (const l of list) { const c = String(l).toLowerCase().split('-')[0]; if (SUPPORTED.includes(c)) return c; }
+    return 'en';
+  }
+  function t(key) {
+    if (currentLang === 'en') return EN_JS[key] != null ? EN_JS[key] : key;
+    const d = I18N[currentLang] || {};
+    return d[key] != null ? d[key] : (EN_JS[key] != null ? EN_JS[key] : key);
+  }
+
+  /* Capture the English source from the DOM once */
+  const i18nEls = [...document.querySelectorAll('[data-i18n]')];
+  i18nEls.forEach(el => { el.dataset.orig = el.innerHTML; });
+  const i18nPhEls = [...document.querySelectorAll('[data-i18n-ph]')];
+  i18nPhEls.forEach(el => { el.dataset.origPh = el.getAttribute('placeholder') || ''; });
+
+  function applyStatic() {
+    i18nEls.forEach(el => {
+      const k = el.getAttribute('data-i18n');
+      if (currentLang === 'en') { el.innerHTML = el.dataset.orig; return; }
+      const d = I18N[currentLang] || {};
+      el.innerHTML = (d[k] != null) ? d[k] : el.dataset.orig;
+    });
+    i18nPhEls.forEach(el => {
+      const k = el.getAttribute('data-i18n-ph');
+      if (currentLang === 'en') { el.setAttribute('placeholder', el.dataset.origPh); return; }
+      const d = I18N[currentLang] || {};
+      el.setAttribute('placeholder', (d[k] != null) ? d[k] : el.dataset.origPh);
+    });
+  }
+
+  function buildLangMenu() {
+    const menuEl = document.getElementById('langMenu');
+    const mobEl  = document.getElementById('mobileLang');
+    if (menuEl) menuEl.innerHTML = LANGS.map(([code, name, short]) =>
+      `<li><button data-lang="${code}"><span>${name}</span><span class="lang-code">${short}</span></button></li>`).join('');
+    if (mobEl) mobEl.innerHTML = LANGS.map(([code, , short]) =>
+      `<button data-lang="${code}">${short}</button>`).join('');
+    document.querySelectorAll('[data-lang]').forEach(b => {
+      b.addEventListener('click', () => {
+        setLang(b.getAttribute('data-lang'));
+        document.getElementById('langSwitch').classList.remove('open');
+        menu.classList.remove('open');
       });
-      const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
-      return years.map(yr => `
-        <div class="archive-year-group">
-          <div class="archive-year-heading">${esc(yr)}</div>
-          <table class="archive-table">
-            <thead><tr>
-              <th>Date</th>
-              <th>Concert</th>
-              <th class="archive-hide-sm">Venue</th>
-              <th class="archive-hide-sm">Time</th>
-              <th></th>
-            </tr></thead>
-            <tbody>
-              ${byYear[yr].map(e => `
-                <tr class="archive-row">
-                  <td class="archive-date">${esc(e.day)}&nbsp;${esc(e.mo)}${e.year ? `<br><span style="font-size:.68rem;color:var(--text-subtle);letter-spacing:.04em">${esc(e.year)}</span>` : ''}</td>
-                  <td class="archive-title"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a></td>
-                  <td class="archive-venue archive-hide-sm">${esc(e.venue)}</td>
-                  <td class="archive-time archive-hide-sm">${esc(e.time)}</td>
-                  <td class="archive-action"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer" class="archive-link">Info →</a></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+    });
+  }
+
+  function setLang(lang) {
+    currentLang = SUPPORTED.includes(lang) ? lang : 'en';
+    try { localStorage.setItem('lang', currentLang); } catch (e) {}
+    document.documentElement.lang = currentLang;
+    applyStatic();
+    const cur = LANGS.find(l => l[0] === currentLang);
+    const curEl = document.getElementById('langCur');
+    if (curEl) curEl.textContent = cur ? cur[2] : 'EN';
+    document.querySelectorAll('[data-lang]').forEach(b =>
+      b.classList.toggle('active', b.getAttribute('data-lang') === currentLang));
+    if (eventsLoaded) paintEvents();
+  }
+
+  /* Dropdown open/close */
+  const langSwitch = document.getElementById('langSwitch');
+  const langBtn = document.getElementById('langBtn');
+  if (langBtn) langBtn.addEventListener('click', e => { e.stopPropagation(); langSwitch.classList.toggle('open'); });
+  document.addEventListener('click', e => { if (langSwitch && !langSwitch.contains(e.target)) langSwitch.classList.remove('open'); });
+
+  buildLangMenu();
+  setLang(detectLang());
+
+  /* ── Events ── */
+  const evContainer = document.getElementById('events-list');
+  const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function safeHref(url) {
+    try { const u = new URL(url); return (u.protocol==='https:'||u.protocol==='http:') ? url : '#'; } catch { return '#'; }
+  }
+
+  /* Cached event data so the section can be re-rendered on language change */
+  let upcoming   = null;   /* null=loading, []=none, [...]=data */
+  let upError    = false;
+  let pastEvents = [];
+
+  /* Event row – full-width with venue in centre column */
+  function evRow(e) {
+    const cta = e.ticket ? t('events.tickets') : t('events.info');
+    return `<a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer" class="event-row">
+      <div class="event-badge"><span class="badge-day">${esc(e.day)}</span><span class="badge-mo">${esc(e.mo)}</span></div>
+      <div class="event-title">${esc(e.title)}</div>
+      <div class="event-place">${esc(e.place)}<span class="event-time">${esc(e.time)}</span></div>
+      <span class="event-cta">${esc(cta)}&nbsp;→</span>
+    </a>`;
+  }
+
+  /* Archive table grouped by year */
+  function archiveTable(events) {
+    if (!events.length) return '';
+    const byYear = {};
+    events.forEach(e => {
+      const yr = e.year || '—';
+      if (!byYear[yr]) byYear[yr] = [];
+      byYear[yr].push(e);
+    });
+    const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
+    return years.map(yr => `
+      <div class="archive-year-group">
+        <div class="archive-year-heading">${esc(yr)}</div>
+        <table class="archive-table">
+          <thead><tr>
+            <th>${esc(t('col.date'))}</th>
+            <th>${esc(t('col.concert'))}</th>
+            <th class="archive-hide-sm">${esc(t('col.venue'))}</th>
+            <th class="archive-hide-sm">${esc(t('col.time'))}</th>
+            <th></th>
+          </tr></thead>
+          <tbody>
+            ${byYear[yr].map(e => `
+              <tr class="archive-row">
+                <td class="archive-date">${esc(e.day)}&nbsp;${esc(e.mo)}${e.year ? `<br><span style="font-size:.68rem;color:var(--text-subtle);letter-spacing:.04em">${esc(e.year)}</span>` : ''}</td>
+                <td class="archive-title"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a></td>
+                <td class="archive-venue archive-hide-sm">${esc(e.venue)}</td>
+                <td class="archive-time archive-hide-sm">${esc(e.time)}</td>
+                <td class="archive-action"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer" class="archive-link">${esc(t('events.info'))} →</a></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `).join('');
+  }
+
+  /* Render the whole events section using the active language */
+  function paintEvents() {
+    if (!evContainer) return;
+    let upHTML;
+    if (upError)                          upHTML = `<p class="events-empty">${esc(t('events.error'))}</p>`;
+    else if (!upcoming || !upcoming.length) upHTML = `<p class="events-empty">${esc(t('events.none'))}</p>`;
+    else                                  upHTML = upcoming.map(evRow).join('');
+
+    const pastHTML = archiveTable(pastEvents);
+    const archiveBodyInner = pastHTML || `
+      <p class="events-empty" style="text-align:center">
+        ${esc(t('events.archiveFallback'))}<br>
+        <a href="https://mehmetpolat.net/events/" target="_blank" rel="noopener noreferrer"
+           class="archive-link" style="display:inline-block;margin-top:14px">${esc(t('events.viewFull'))}</a>
+      </p>`;
+    const archiveCountLabel = pastEvents.length ? String(pastEvents.length) : esc(t('events.viewArchive'));
+
+    evContainer.innerHTML = `
+      <div class="events-label">${esc(t('events.upcoming'))}</div>
+      ${upHTML}
+      <div class="events-archive">
+        <button class="events-archive-toggle" id="archiveBtn" onclick="
+          const body = document.getElementById('archiveBody');
+          const svg  = document.getElementById('archiveArrow');
+          const open = body.style.display === 'block';
+          body.style.display = open ? 'none' : 'block';
+          svg.style.transform = open ? '' : 'rotate(180deg)';
+        ">
+          <span>${esc(t('events.past'))} &nbsp;<em style='font-style:normal;font-weight:400;opacity:.6'>${archiveCountLabel}</em></span>
+          <svg id="archiveArrow" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div id="archiveBody" class="events-archive-body" style="display:none">
+          ${archiveBodyInner}
         </div>
-      `).join('');
-    }
+      </div>
+    `;
+  }
+
+  async function loadEvents() {
+    if (!evContainer) return;
 
     /* 1. Upcoming events – Bandsintown */
-    let upHTML = '';
     try {
       const evs = await fetch('https://rest.bandsintown.com/artists/ID_3811736/events?app_id=js_widget&date=upcoming').then(r => r.json());
       if (Array.isArray(evs) && evs.length) {
-        upHTML = evs.map(e => {
+        upcoming = evs.map(e => {
           const d      = new Date(e.datetime);
           const day    = String(d.getDate()).padStart(2, '0');
           const mo     = MO[d.getMonth()];
@@ -1365,26 +1771,28 @@
           const time   = h ? `${String(h).padStart(2, '0')}:${mm}` : '';
           const place  = [e.venue?.city, e.venue?.country].filter(Boolean).join(', ');
           const ticket = e.offers?.[0]?.url;
-          const href   = ticket || `https://www.bandsintown.com/e/${e.id}`;
-          return row(day, mo, e.title, place, time, href, ticket ? 'Tickets' : 'Info');
-        }).join('');
+          return { day, mo, title: e.title || '', place, time, href: ticket || `https://www.bandsintown.com/e/${e.id}`, ticket: !!ticket };
+        });
       } else {
-        upHTML = '<p class="events-empty">No upcoming concerts scheduled.</p>';
+        upcoming = [];
       }
-    } catch {
-      upHTML = '<p class="events-empty">Could not load upcoming concerts.</p>';
+    } catch (err) {
+      upError = true; upcoming = [];
     }
 
-    /* 2. Past events – scrape WordPress Events Manager via CORS proxy.
-          mehmetpolat.net blocks direct cross-origin fetches, so we route
-          through public read-only proxies. Try several for resilience. */
-    let pastEvents = [];
+    /* 2. Past events – scrape WordPress Events Manager.
+          mehmetpolat.net has no CORS headers, so a browser can't fetch it
+          directly. Primary source is our own same-origin Cloudflare Pages
+          Function (/api/events), which fetches the archive server-side.
+          Public CORS proxies remain as fallbacks if the function is
+          unavailable (e.g. local file preview). */
     const wpUrl   = 'https://mehmetpolat.net/events/';
-    const proxies = [
-      u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
-      u => 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(u),
-      u => 'https://corsproxy.io/?url=' + encodeURIComponent(u),
-      u => 'https://thingproxy.freeboard.io/fetch/' + u,
+    const sources = [
+      () => fetch('/api/events'),                                              /* same-origin edge function */
+      () => fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(wpUrl)),
+      () => fetch('https://api.allorigins.win/raw?url=' + encodeURIComponent(wpUrl + '?scope=past')),
+      () => fetch('https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(wpUrl)),
+      () => fetch('https://corsproxy.io/?url=' + encodeURIComponent(wpUrl)),
     ];
 
     function parseWpEvents(html) {
@@ -1402,72 +1810,35 @@
         /* Year: try every common Events Manager source in order */
         const yearSpan   = item.querySelector('.year');
         const abbr       = item.querySelector('abbr.dtstart, abbr[title]');
-        const dtTitle    = abbr?.getAttribute('title') || '';          /* e.g. "20241215T200000" */
+        const dtTitle    = abbr?.getAttribute('title') || '';
         const timeEl     = item.querySelector('time[datetime]');
         const year =
-          yearSpan?.textContent.trim() ||                              /* <span class="year">2024</span> */
-          dtTitle.slice(0, 4) ||                                       /* abbr title starts with YYYY */
-          timeEl?.getAttribute('datetime')?.slice(0, 4) ||            /* <time datetime="2024-12-15"> */
-          href.match(/\/(\d{4})\//)?.[1] ||                           /* URL /events/2024/12/... */
+          yearSpan?.textContent.trim() ||
+          dtTitle.slice(0, 4) ||
+          timeEl?.getAttribute('datetime')?.slice(0, 4) ||
+          href.match(/\/(\d{4})\//)?.[1] ||
           '';
         return { day, mo, year, title, venue, time, href };
       }).filter(e => e.title);
     }
 
-    /* Fetch from proxy. Also try ?scope=past to get the full historical
-       archive (default page may only show upcoming or recent events). */
-    const wpUrls = [wpUrl, wpUrl + '?scope=past'];
-    const seen   = new Set();
-
-    for (const makeUrl of proxies) {
-      for (const u of wpUrls) {
-        try {
-          const res  = await fetch(makeUrl(u));
-          if (!res.ok) continue;
-          const evts = parseWpEvents(await res.text()).filter(e => {
-            if (seen.has(e.href)) return false;
-            seen.add(e.href);
-            return true;
-          });
-          pastEvents.push(...evts);
-        } catch { /* try next */ }
-      }
-      if (pastEvents.length) break;   /* stop after first working proxy */
+    const seen = new Set();
+    for (const get of sources) {
+      try {
+        const res = await get();
+        if (!res.ok) continue;
+        parseWpEvents(await res.text()).forEach(e => {
+          if (!seen.has(e.href)) { seen.add(e.href); pastEvents.push(e); }
+        });
+        if (pastEvents.length) break;   /* stop at first source that works */
+      } catch (e2) { /* try next source */ }
     }
 
-    const pastHTML  = archiveTable(pastEvents);
-    const pastCount = pastEvents.length;
+    eventsLoaded = true;
+    paintEvents();
+  }
 
-    /* Archive body: scraped events if available, else a link to the full
-       archive on the source site so the section is never empty. */
-    const archiveBodyInner = pastHTML || `
-      <p class="events-empty" style="text-align:center">
-        The full concert archive lives on the main site.<br>
-        <a href="https://mehmetpolat.net/events/" target="_blank" rel="noopener noreferrer"
-           class="archive-link" style="display:inline-block;margin-top:14px">View full archive →</a>
-      </p>`;
-    const archiveCountLabel = pastCount ? `${pastCount} events` : 'View archive';
-
-    container.innerHTML = `
-      <div class="events-label">Upcoming concerts</div>
-      ${upHTML}
-      <div class="events-archive">
-        <button class="events-archive-toggle" id="archiveBtn" onclick="
-          const body = document.getElementById('archiveBody');
-          const svg  = document.getElementById('archiveArrow');
-          const open = body.style.display === 'block';
-          body.style.display = open ? 'none' : 'block';
-          svg.style.transform = open ? '' : 'rotate(180deg)';
-        ">
-          <span>Past concerts &nbsp;<em style='font-style:normal;font-weight:400;opacity:.6'>${archiveCountLabel}</em></span>
-          <svg id="archiveArrow" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-        </button>
-        <div id="archiveBody" class="events-archive-body" style="display:none">
-          ${archiveBodyInner}
-        </div>
-      </div>
-    `;
-  })();
+  loadEvents();
 </script>
 
 </body>
