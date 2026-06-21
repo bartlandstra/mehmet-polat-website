@@ -1442,28 +1442,29 @@
       <div class="contact-right fi delay-2">
         <h3 data-i18n="contact.send">Send a Message</h3>
         <div class="rule"></div>
-        <form action="https://api.web3forms.com/submit" method="POST">
+        <form action="https://api.web3forms.com/submit" method="POST" id="contactForm">
           <input type="hidden" name="access_key" value="05fdb8ea-e76a-4775-b586-eeb5542af282">
-          <input type="hidden" name="subject" value="New message from mehmetpolat.net">
+          <input type="hidden" name="subject" value="New message from mehmetpolat website">
+          <input type="hidden" name="from_name" value="Mehmet Polat Website">
           <input type="checkbox" name="botcheck" style="display:none">
           <div class="field">
-            <label for="fname" data-i18n="form.name">Your Name</label>
-            <input type="text" id="fname" name="your-name" placeholder="Your name" data-i18n-ph="form.namePh" required>
+            <label>Name</label>
+            <input type="text" name="name" required placeholder="Your name">
           </div>
           <div class="field">
-            <label for="femail" data-i18n="form.email">Email Address</label>
-            <input type="email" id="femail" name="email" placeholder="your@email.com" data-i18n-ph="form.emailPh" required>
+            <label>Email</label>
+            <input type="email" name="email" required placeholder="Your email">
           </div>
           <div class="field">
-            <label for="fsubject" data-i18n="form.subject">Subject</label>
-            <input type="text" id="fsubject" name="your-subject" placeholder="Concert booking, collaboration..." data-i18n-ph="form.subjectPh">
+            <label>Subject</label>
+            <input type="text" name="subject_line" placeholder="Subject">
           </div>
           <div class="field">
-            <label for="fmsg" data-i18n="form.message">Message</label>
-            <textarea id="fmsg" name="your-message" placeholder="Your message..." data-i18n-ph="form.messagePh"></textarea>
+            <label>Message</label>
+            <textarea name="message" required placeholder="Your message"></textarea>
           </div>
-          <button type="submit" class="btn-submit" id="contactSubmit" data-i18n="form.submit">Send Message</button>
-          <p id="contactResult" style="margin-top:14px;display:none"></p>
+          <button type="submit" id="contactSubmit" class="btn-submit">Send Message</button>
+          <div id="contactResult" style="margin-top:14px;font-size:.85rem;display:none"></div>
         </form>
       </div>
 
