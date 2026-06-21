@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Mehmet Polat — Master ud player, composer and teacher. Internationally touring musician blending Anatolian, Jazz, and World music traditions.">
-  <meta name="robots" content="noindex, nofollow">
+  <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://mehmetpolat.net/">
   <title>Mehmet Polat – Master Ud Player, Composer & Teacher</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -536,6 +536,18 @@
     }
     .gal-item:hover img { transform: scale(1.06); filter: grayscale(0%); }
 
+    /* ─── TEACHING ─── */
+    #teaching { background: var(--bg); }
+    .teaching-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px; margin-top: 52px; }
+    .teaching-card { background: var(--bg-card); border: 1px solid var(--border); padding: 40px 36px; transition: border-color .25s, transform .25s; }
+    .teaching-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .teaching-icon { font-size: 2rem; margin-bottom: 20px; display: block; }
+    .teaching-card h3 { font-size: 1.22rem; margin-bottom: 14px; color: var(--text); }
+    .teaching-card p { font-size: .92rem; color: var(--text-muted); line-height: 1.78; }
+    .teaching-note { margin-top: 48px; padding: 28px 36px; border-left: 3px solid var(--accent); background: var(--bg-card); }
+    .teaching-note p { color: var(--text-muted); font-size: .98rem; line-height: 1.8; }
+    .teaching-note strong { color: var(--text); }
+
     /* ─── CONTACT ─── */
     #contact { background: var(--bg-card); border-top: 1px solid var(--border); }
 
@@ -699,6 +711,7 @@
       .hero-panel::before { display: none; }
       .hero-scroll { display: none; }
       .about-grid, .quartet-card, .contact-grid { grid-template-columns: 1fr; gap: 44px; }
+      .teaching-grid { grid-template-columns: 1fr; }
       .quartet-body { padding: 40px 32px; }
       #gallery { grid-template-columns: repeat(2,1fr); }
     }
@@ -790,6 +803,7 @@
     <li><a href="#discography">Albums</a></li>
     <li><a href="#listen">Listen</a></li>
     <li><a href="#events">Events</a></li>
+    <li><a href="#teaching">Lessons</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 
@@ -1085,6 +1099,23 @@
 </section>
 
 <!-- ═══════════════════════════════ CONTACT ═══════════════════════════════ -->
+
+<!-- ═══════ TEACHING ═══════ -->
+<section id="teaching">
+  <div class="wrap">
+    <div class="eyebrow fi"><span>Education</span></div>
+    <h2 class="section-title fi delay-1">Lessons &amp; <em>Workshops</em></h2>
+    <div class="rule fi delay-1"></div>
+    <p class="fi delay-2" style="color:var(--text-muted);max-width:640px;margin-bottom:0;line-height:1.82;">Mehmet Polat shares his deep knowledge of the ud, maqam music, and cross-cultural improvisation with students and musicians worldwide — online and in person.</p>
+    <div class="teaching-grid">
+      <div class="teaching-card fi delay-1"><span class="teaching-icon">🎵</span><h3>Private Lessons</h3><p>One-on-one ud lessons tailored to your level — from beginners exploring the instrument to advanced players working on technique, maqam theory, and original composition. Online via video call or in person in Amsterdam.</p></div>
+      <div class="teaching-card fi delay-2"><span class="teaching-icon">🌍</span><h3>Workshops</h3><p>Group workshops focused on world music, cross-cultural improvisation, and the unique character of the ud. Suitable for conservatory students, jazz musicians, and curious players from any background.</p></div>
+      <div class="teaching-card fi delay-3"><span class="teaching-icon">🎓</span><h3>Masterclasses</h3><p>In-depth masterclasses for music institutions, festivals, and conservatories. Topics include Anatolian and Ottoman music traditions, Mehmet's left-hand technique innovations, and composing for non-Western instruments in contemporary contexts.</p></div>
+    </div>
+    <div class="teaching-note fi delay-2"><p><strong>Interested in lessons or booking a workshop?</strong> Reach out via the contact form below or call <strong>+31 (0)6 341 431 21</strong>. Online lessons available worldwide — all levels welcome.</p></div>
+  </div>
+</section>
+
 <section id="contact">
   <div class="wrap">
     <div class="contact-grid">
@@ -1231,9 +1262,9 @@
           return row(day, mo, e.title, meta, href, ticket ? 'Tickets' : 'Info');
         }).join('');
       } else {
-        upHTML = '<p class="events-empty">Geen aankomende concerten gepland.</p>';
+        upHTML = '<p class="events-empty">No upcoming concerts scheduled.</p>';
       }
-    } catch { upHTML = '<p class="events-empty">Aankomende concerten konden niet worden geladen.</p>'; }
+    } catch { upHTML = 'Could not load upcoming concerts.'; }
 
     /* Past events scraped from WordPress Events Manager */
     let pastHTML = '', pastCount = 0;
