@@ -708,10 +708,53 @@
       .albums-grid { grid-template-columns: repeat(2,1fr); gap: 22px; }
     }
 
-    /* ─── EVENTS (Bandsintown) ─── */
+    /* ─── EVENTS ─── */
     #events { background: var(--bg-light); }
-    .bit-widget-container { margin-top: 52px; }
+    .events-label {
+      font-family: 'Inter', sans-serif;
+      font-size: .7rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--accent); font-weight: 600;
+      padding-bottom: 16px; border-bottom: 2px solid var(--border);
+      margin-top: 52px; margin-bottom: 0;
+    }
+    .event-row {
+      display: grid; grid-template-columns: 52px 1fr auto;
+      gap: 0 24px; align-items: center;
+      padding: 20px 0; border-bottom: 1px solid var(--border);
+      text-decoration: none; color: var(--text); transition: color .2s;
+    }
+    .event-row:hover { color: var(--accent); }
+    .event-badge { text-align: center; }
+    .badge-day {
+      display: block; font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 700; color: var(--accent); line-height: 1;
+    }
+    .badge-mo {
+      display: block; font-size: .62rem; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--text-muted); margin-top: 2px;
+    }
+    .event-title { font-weight: 500; margin-bottom: 3px; }
+    .event-meta  { font-size: .8rem; color: var(--text-muted); }
+    .event-cta {
+      font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--accent-muted); font-weight: 600; white-space: nowrap; transition: color .2s;
+    }
+    .event-row:hover .event-cta { color: var(--accent); }
+    .events-empty { color: var(--text-muted); padding: 32px 0; font-size: .9rem; }
+    .events-archive { margin-top: 48px; }
+    .events-archive-toggle {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      background: none; border: none; border-bottom: 2px solid var(--border);
+      padding: 0 0 16px; cursor: pointer; color: var(--accent);
+      font-family: 'Inter', sans-serif; font-size: .7rem; letter-spacing: .22em;
+      text-transform: uppercase; font-weight: 600;
+    }
+    .events-archive-toggle svg { width: 16px; height: 16px; stroke: currentColor; fill: none; transition: transform .3s; }
     .events-actions { margin-top: 44px; display: flex; gap: 14px; flex-wrap: wrap; }
+    @media (max-width: 600px) {
+      .event-row { grid-template-columns: 44px 1fr; }
+      .event-cta { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -1015,30 +1058,18 @@
 <section id="events">
   <div class="wrap">
     <div class="eyebrow fi"><span>On Tour</span></div>
-    <h2 class="section-title fi delay-1">Upcoming <em>Concerts</em></h2>
+    <h2 class="section-title fi delay-1">Concerts &amp; <em>Tour Dates</em></h2>
     <div class="rule fi delay-1"></div>
     <p class="fi delay-2" style="color:var(--text-muted);max-width:620px;margin-bottom:0;line-height:1.82;">
       Mehmet Polat performs internationally — from intimate jazz clubs to major festivals across Europe and beyond.
     </p>
 
-    <div class="bit-widget-container fi delay-2">
-      <a class="bit-widget-initializer"
-         data-artist-name="ID_3811736"
-         data-display-limit="100"
-         data-display-past-dates="true"
-         data-display-local-dates="false"
-         data-auto-style="false"
-         data-background-color="transparent"
-         data-text-color="#f5ede0"
-         data-link-color="#c9975a"
-         data-link-text-color="#0d0c0b"
-         data-popup-background-color="#1c1915">
-      </a>
+    <div id="events-list" class="fi delay-2">
+      <p class="events-empty">Loading events…</p>
     </div>
 
     <div class="events-actions fi delay-3">
-      <a href="https://www.bandsintown.com/a/15384023-mehmet-polat?came_from=267" target="_blank" class="btn btn-ghost">All events on Bandsintown ↗</a>
-      <a href="https://mehmetpolat.net/events/" target="_blank" class="btn btn-ghost">Full event archive ↗</a>
+      <a href="https://www.bandsintown.com/a/15384023-mehmet-polat" target="_blank" class="btn btn-ghost">Follow on Bandsintown ↗</a>
     </div>
   </div>
 </section>
@@ -1154,9 +1185,84 @@
   document.getElementById('hamburger').onclick = () => menu.classList.add('open');
   document.getElementById('mobileClose').onclick  = () => menu.classList.remove('open');
   function closeMobile() { menu.classList.remove('open'); }
+
+  /* ── Events: upcoming from Bandsintown API + archive from mehmetpolat.net ── */
+  (async function initEvents() {
+    const container = document.getElementById('events-list');
+    if (!container) return;
+    const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    function row(day, mo, title, meta, href, cta) {
+      return `<a href="${href}" target="_blank" rel="noopener" class="event-row">
+        <div class="event-badge"><span class="badge-day">${day}</span><span class="badge-mo">${mo}</span></div>
+        <div class="event-info">
+          <div class="event-title">${title}</div>
+          ${meta ? `<div class="event-meta">${meta}</div>` : ''}
+        </div>
+        <span class="event-cta">${cta}&nbsp;→</span>
+      </a>`;
+    }
+
+    /* Upcoming events via Bandsintown REST API */
+    let upHTML = '';
+    try {
+      const evs = await fetch('https://rest.bandsintown.com/artists/ID_3811736/events?app_id=js_widget&date=upcoming').then(r=>r.json());
+      if (Array.isArray(evs) && evs.length) {
+        upHTML = evs.map(e => {
+          const d   = new Date(e.datetime);
+          const day = String(d.getDate()).padStart(2,'0');
+          const mo  = MO[d.getMonth()];
+          const h   = d.getHours(), m = String(d.getMinutes()).padStart(2,'0');
+          const time = h ? `${String(h).padStart(2,'0')}:${m}` : '';
+          const city = e.venue?.city ? `${e.venue.city}` : '';
+          const meta = [city, time].filter(Boolean).join(' · ');
+          const ticket = e.offers?.[0]?.url;
+          const href   = ticket || `https://www.bandsintown.com/e/${e.id}`;
+          return row(day, mo, e.title, meta, href, ticket ? 'Tickets' : 'Info');
+        }).join('');
+      } else {
+        upHTML = '<p class="events-empty">Geen aankomende concerten gepland.</p>';
+      }
+    } catch { upHTML = '<p class="events-empty">Aankomende concerten konden niet worden geladen.</p>'; }
+
+    /* Past events scraped from WordPress Events Manager */
+    let pastHTML = '', pastCount = 0;
+    try {
+      const wpHtml = await fetch('https://mehmetpolat.net/events/').then(r=>r.text());
+      const doc = new DOMParser().parseFromString(wpHtml, 'text/html');
+      const items = [...doc.querySelectorAll('.em-event.em-item')];
+      pastCount = items.length;
+      pastHTML = items.map(item => {
+        const day   = item.querySelector('.day')?.textContent.trim() || '—';
+        const mo    = item.querySelector('.month')?.textContent.trim() || '';
+        const title = item.querySelector('.em-item-title a')?.textContent.trim() || '';
+        const href  = item.querySelector('.em-item-title a')?.getAttribute('href') || '#';
+        const time  = item.querySelector('.em-event-time')?.textContent.replace(/\s+/g,' ').trim() || '';
+        const venue = item.querySelector('.em-event-location')?.textContent.replace(/\s+/g,' ').trim() || '';
+        const meta  = [venue, time].filter(Boolean).join(' · ');
+        return row(day, mo, title, meta, href, 'Info');
+      }).join('');
+    } catch { pastHTML = ''; }
+
+    container.innerHTML = `
+      <div class="events-label">Aankomende concerten</div>
+      ${upHTML}
+      ${pastHTML ? `
+      <div class="events-archive">
+        <button class="events-archive-toggle" onclick="
+          const body = this.nextElementSibling;
+          const open = body.style.display !== 'none';
+          body.style.display = open ? 'none' : 'block';
+          this.querySelector('svg').style.transform = open ? '' : 'rotate(180deg)';
+        ">
+          <span>Afgelopen concerten <em style='color:var(--text-muted);font-style:normal;font-weight:400'>(${pastCount}+ evenementen)</em></span>
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div style="display:none">${pastHTML}</div>
+      </div>` : ''}
+    `;
+  })();
 </script>
 
-<!-- Bandsintown widget -->
-<script src="https://widget.bandsintown.com/main.min.js" charset="utf-8"></script>
 </body>
 </html>
