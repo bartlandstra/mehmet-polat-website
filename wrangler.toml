@@ -1,0 +1,6 @@
+name = "mehmet-polat-website"
+compatibility_date = "2024-01-01"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "mehmet-polat-media"
