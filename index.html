@@ -2123,7 +2123,7 @@ id="press">
         'https://rest.bandsintown.com/artists/ID_3811736/events?app_id=js_widget&date=past'
       ).then(r => r.json());
       if (Array.isArray(pastEvs)) {
-        pastEvents = pastEvs.map(e => {
+        if(pastEvs&&pastEvs.length>0){pastEvents = pastEvs.map(e => {
           const d    = new Date(e.datetime);
           const day  = String(d.getDate()).padStart(2, '0');
           const mo   = MO[d.getMonth()];
@@ -2135,7 +2135,7 @@ id="press">
           const href  = e.url || `https://www.bandsintown.com/e/${e.id}`;
           const title = e.title || venue || 'Concert';
           return { day, mo, year, title, venue, place, time, href };
-        });
+        });}
         const moIdx = m => MO.indexOf(m);
         pastEvents.sort((a, b) =>
           b.year.localeCompare(a.year) ||
