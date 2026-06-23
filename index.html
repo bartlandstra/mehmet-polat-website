@@ -2217,7 +2217,6 @@ id="press">
             <th>${esc(t('col.concert'))}</th>
             <th class="archive-hide-sm">${esc(t('col.venue'))}</th>
             <th class="archive-hide-sm">${esc(t('col.time'))}</th>
-            <th></th>
           </tr></thead>
           <tbody>
             ${byYear[yr].map(e => `
@@ -2226,7 +2225,6 @@ id="press">
                 <td class="archive-title"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a></td>
                 <td class="archive-venue archive-hide-sm">${esc(e.venue)}${e.place ? `<br><span style="font-size:.75em;opacity:.65">${esc(e.place)}</span>` : ''}</td>
                 <td class="archive-time archive-hide-sm">${esc(e.time)}</td>
-                <td class="archive-action"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer" style="color:var(--text-muted);text-decoration:none;font-size:.78rem;transition:color .18s">${esc(t('events.info'))}</a></td>
               </tr>
             `).join('')}
           </tbody>
