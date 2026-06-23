@@ -2180,6 +2180,12 @@ id="press">
   {year:2021,day:"18",mo:"Sep",title:"Concert with Sinfonia Rotterdam at Laurenskerk",meta:"Laurenskerk Rotterdam · 2021",href:''},
   {year:2021,day:"18",mo:"Sep",title:"Concert with Sinfonia Rotterdam at Kasteel Groeneveld",meta:"Kasteel Groeneveld Baarn · 2021",href:''}
 ];
+  pastEvents.forEach(e => {
+    const parts = (e.meta || '').split(' · ');
+    if (parts.length > 1) { e.venue = parts[0]; }
+    else { const m = e.title.match(/ (?:in|at) (.+)$/i); e.venue = m ? m[1] : ''; }
+    e.time = '20:30';
+  });
 
   /* Event row – full-width with venue in centre column */
   function evRow(e) {
@@ -2220,7 +2226,7 @@ id="press">
                 <td class="archive-title"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a></td>
                 <td class="archive-venue archive-hide-sm">${esc(e.venue)}${e.place ? `<br><span style="font-size:.75em;opacity:.65">${esc(e.place)}</span>` : ''}</td>
                 <td class="archive-time archive-hide-sm">${esc(e.time)}</td>
-                <td class="archive-action"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer" class="archive-link">${esc(t('events.info'))} →</a></td>
+                <td class="archive-action"><a href="${safeHref(e.href)}" target="_blank" rel="noopener noreferrer" style="color:var(--text-muted);text-decoration:none;font-size:.78rem;transition:color .18s">${esc(t('events.info'))}</a></td>
               </tr>
             `).join('')}
           </tbody>
