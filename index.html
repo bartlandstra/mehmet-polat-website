@@ -52,8 +52,6 @@
   }
   </script>
 
-  <!-- Preload LCP image (hero background) -->
-  <link rel="preload" as="image" href="images/hero.webp" fetchpriority="high">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -205,10 +203,10 @@
     .hero-bg {
       position: absolute;
       inset: 0;
-      background-image: url('images/hero.webp');
-      background-size: cover;
-      background-position: center 15%;
-      transform-origin: center;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 15%;
     }
     /* Subtle right-edge fade into the dark right panel */
     .hero-photo::after {
@@ -803,7 +801,6 @@
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 960px) {
-      .hero-bg { background-image: url('images/hero-mobile.webp'); }
       #mainNav { padding: 0 24px; }
       .nav-links, .nav-social { display: none; }
       .hamburger { display: flex; }
@@ -1227,7 +1224,10 @@
 <section id="hero">
   <!-- Left: photo -->
   <div class="hero-photo">
-    <div class="hero-bg" id="heroBg"></div>
+    <picture>
+      <source srcset="images/hero-mobile.webp" media="(max-width: 960px)">
+      <img class="hero-bg" src="images/hero.webp" alt="Mehmet Polat playing the ud" width="1920" height="1280" fetchpriority="high" decoding="async">
+    </picture>
   </div>
 
   <!-- Right: text panel -->
