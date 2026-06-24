@@ -162,12 +162,13 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 36px;
+      gap: clamp(14px, 3.5vh, 36px);
+      padding: 60px 24px 24px;
     }
     .mobile-menu.open { display: flex; }
     .mobile-menu a {
       font-family: 'Playfair Display', serif;
-      font-size: 2.2rem;
+      font-size: clamp(1.3rem, 5vh, 2.2rem);
       color: var(--text);
       text-decoration: none;
       transition: color .2s;
@@ -175,10 +176,10 @@
     .mobile-menu a:hover { color: var(--accent); }
     .mobile-close {
       position: absolute;
-      top: 24px; right: 28px;
+      top: 20px; right: 24px;
       background: none; border: none;
       color: var(--text-muted);
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       cursor: pointer;
     }
 
