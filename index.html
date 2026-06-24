@@ -1188,7 +1188,7 @@
   <a href="#discography" onclick="closeMobile()" data-i18n="nav.albums">Albums</a>
   <a href="#listen"      onclick="closeMobile()" data-i18n="nav.listen">Listen</a>
   <a href="#events"      onclick="closeMobile()" data-i18n="nav.events">Events</a>
-  <a href="#press"       onclick="closeMobile()">Press &amp; Reviews</a>
+  <a href="#press"       onclick="closeMobile()" data-i18n="nav.press">Press &amp; Reviews</a>
   <a href="#contact"     onclick="closeMobile()" data-i18n="nav.contact">Contact</a>
 </div>
 
@@ -1202,7 +1202,7 @@
     <li><a href="#discography" data-i18n="nav.albums">Albums</a></li>
     <li><a href="#listen" data-i18n="nav.listen">Listen</a></li>
     <li><a href="#events" data-i18n="nav.events">Events</a></li>
-    <li><a href="#press">Press &amp; Reviews</a></li>
+    <li><a href="#press" data-i18n="nav.press">Press &amp; Reviews</a></li>
     <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
   </ul>
 
@@ -1514,10 +1514,10 @@
 
 id="press">
   <div class="wrap">
-    <div class="eyebrow fi"><span>Press &amp; Reviews</span></div>
-    <h2 class="section-title fi delay-1">What the World <em>Says</em></h2>
+    <div class="eyebrow fi"><span data-i18n="press.eyebrow">Press &amp; Reviews</span></div>
+    <h2 class="section-title fi delay-1" data-i18n="press.title">What the World <em>Says</em></h2>
     <div class="rule fi delay-1"></div>
-    <p class="fi delay-2" style="color:var(--text-muted);max-width:640px;margin-bottom:0;line-height:1.82;">Over 100 reviews from press worldwide — from New York to Tokyo, Amsterdam to Ankara.</p>
+    <p class="fi delay-2" style="color:var(--text-muted);max-width:640px;margin-bottom:0;line-height:1.82;" data-i18n="press.intro">Over 100 reviews from press worldwide — from New York to Tokyo, Amsterdam to Ankara.</p>
     <div class="press-highlights">
       <div class="press-quote fi"><span class="press-quote-mark">“</span><p class="press-quote-text">Mehmet Polat is a masterful interpreter of all that is human and alive.</p><p class="press-quote-source">Dani Heyvaert — Rootstime.be</p></div>
       <div class="press-quote fi delay-1"><span class="press-quote-mark">“</span><p class="press-quote-text">An intense and richly textured journey where oud meets jazz, rhythm meets nuance, and tradition meets fearless invention.</p><p class="press-quote-source">Lira Musikmagasin — Sweden</p></div>
@@ -1528,7 +1528,7 @@ id="press">
     </div>
     <div class="events-archive" style="margin-top:0">
       <button class="events-archive-toggle" id="pressArchiveBtn" onclick="var b=document.getElementById('pressArchiveBody');var hidden=b.style.display==='none'||!b.style.display||b.getAttribute('data-hidden')==='1';b.style.display=hidden?'block':'none';b.setAttribute('data-hidden',hidden?'0':'1');this.querySelector('svg').style.transform=hidden?'rotate(180deg)':'';this.setAttribute('aria-expanded',hidden?'true':'false');" aria-expanded="false">
-        All Reviews
+        <span data-i18n="press.allReviews">All Reviews</span>
         <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div id="pressArchiveBody" style="display:none">
@@ -1682,7 +1682,7 @@ id="press">
     <a href="#projects" data-i18n="nav.projects">Projects</a>
     <a href="#discography" data-i18n="nav.albums">Albums</a>
     <a href="#listen" data-i18n="nav.listen">Listen</a>
-    <a href="#press">Press &amp; Reviews</a>
+    <a href="#press" data-i18n="nav.press">Press &amp; Reviews</a>
     <a href="#contact" data-i18n="nav.contact">Contact</a>
     <a href="#events" data-i18n="nav.events">Events</a>
   </nav>
@@ -1782,6 +1782,7 @@ id="press">
 
   const I18N = {
     nl: {
+      'nav.press':'Pers & Recensies','press.eyebrow':'Pers & Recensies','press.title':'Wat de wereld <em>zegt</em>','press.intro':'Meer dan 100 recensies van pers wereldwijd — van New York tot Tokio, Amsterdam tot Ankara.','press.allReviews':'Alle recensies',
       'nav.bio':'Bio','nav.projects':'Projecten','nav.albums':'Albums','nav.listen':'Luisteren','nav.events':'Concerten','nav.contact':'Contact',
       'hero.location':'Amsterdam · Nederland','hero.sub':'Meester ud-speler<br>Componist &nbsp;·&nbsp; Docent','hero.discover':'Ontdek','hero.listen':'Luister nu',
       'about.eyebrow':'Over','about.title':'Een stem tussen<br><em>werelden</em>',
@@ -1809,6 +1810,7 @@ id="press">
       'footer.tagline':'Meester ud-speler · Componist · Docent',
     },
     de: {
+      'nav.press':'Presse & Rezensionen','press.eyebrow':'Presse & Rezensionen','press.title':'Was die Welt <em>sagt</em>','press.intro':'Über 100 Rezensionen aus der Presse weltweit — von New York bis Tokio, Amsterdam bis Ankara.','press.allReviews':'Alle Rezensionen',
       'nav.bio':'Bio','nav.projects':'Projekte','nav.albums':'Alben','nav.listen':'Hören','nav.events':'Konzerte','nav.contact':'Kontakt',
       'hero.location':'Amsterdam · Niederlande','hero.sub':'Meister an der Ud<br>Komponist &nbsp;·&nbsp; Lehrer','hero.discover':'Entdecken','hero.listen':'Jetzt hören',
       'about.eyebrow':'Über','about.title':'Eine Stimme zwischen<br><em>Welten</em>',
@@ -1836,6 +1838,7 @@ id="press">
       'footer.tagline':'Meister an der Ud · Komponist · Lehrer',
     },
     fr: {
+      'nav.press':'Presse & Critiques','press.eyebrow':'Presse & Critiques','press.title':'Ce que le monde <em>dit</em>','press.intro':'Plus de 100 critiques de la presse mondiale — de New York à Tokyo, d’Amsterdam à Ankara.','press.allReviews':'Toutes les critiques',
       'nav.bio':'Bio','nav.projects':'Projets','nav.albums':'Albums','nav.listen':'Écouter','nav.events':'Concerts','nav.contact':'Contact',
       'hero.location':'Amsterdam · Pays-Bas','hero.sub':'Maître joueur d’oud<br>Compositeur &nbsp;·&nbsp; Professeur','hero.discover':'Découvrir','hero.listen':'Écouter',
       'about.eyebrow':'À propos','about.title':'Une voix entre<br><em>les mondes</em>',
@@ -1863,6 +1866,7 @@ id="press">
       'footer.tagline':'Maître joueur d’oud · Compositeur · Professeur',
     },
     es: {
+      'nav.press':'Prensa & Reseñas','press.eyebrow':'Prensa & Reseñas','press.title':'Lo que el mundo <em>dice</em>','press.intro':'Más de 100 reseñas de prensa de todo el mundo — de Nueva York a Tokio, de Ámsterdam a Ankara.','press.allReviews':'Todas las reseñas',
       'nav.bio':'Bio','nav.projects':'Proyectos','nav.albums':'Álbumes','nav.listen':'Escuchar','nav.events':'Conciertos','nav.contact':'Contacto',
       'hero.location':'Ámsterdam · Países Bajos','hero.sub':'Maestro del ud<br>Compositor &nbsp;·&nbsp; Profesor','hero.discover':'Descubrir','hero.listen':'Escuchar ahora',
       'about.eyebrow':'Acerca de','about.title':'Una voz entre<br><em>mundos</em>',
@@ -1890,6 +1894,7 @@ id="press">
       'footer.tagline':'Maestro del ud · Compositor · Profesor',
     },
     it: {
+      'nav.press':'Stampa & Recensioni','press.eyebrow':'Stampa & Recensioni','press.title':'Ciò che il mondo <em>dice</em>','press.intro':'Oltre 100 recensioni dalla stampa di tutto il mondo — da New York a Tokyo, da Amsterdam ad Ankara.','press.allReviews':'Tutte le recensioni',
       'nav.bio':'Bio','nav.projects':'Progetti','nav.albums':'Album','nav.listen':'Ascolta','nav.events':'Concerti','nav.contact':'Contatti',
       'hero.location':'Amsterdam · Paesi Bassi','hero.sub':'Maestro di ud<br>Compositore &nbsp;·&nbsp; Insegnante','hero.discover':'Scopri','hero.listen':'Ascolta ora',
       'about.eyebrow':'Chi è','about.title':'Una voce tra<br><em>i mondi</em>',
@@ -1917,6 +1922,7 @@ id="press">
       'footer.tagline':'Maestro di ud · Compositore · Insegnante',
     },
     tr: {
+      'nav.press':'Basın & Eleştiriler','press.eyebrow':'Basın & Eleştiriler','press.title':'Dünya ne <em>diyor</em>','press.intro':'Dünya basınından 100’den fazla eleştiri — New York’tan Tokyo’ya, Amsterdam’dan Ankara’ya.','press.allReviews':'Tüm eleştiriler',
       'nav.bio':'Biyografi','nav.projects':'Projeler','nav.albums':'Albümler','nav.listen':'Dinle','nav.events':'Konserler','nav.contact':'İletişim',
       'hero.location':'Amsterdam · Hollanda','hero.sub':'Usta Ud Sanatçısı<br>Besteci &nbsp;·&nbsp; Eğitmen','hero.discover':'Keşfet','hero.listen':'Şimdi Dinle',
       'about.eyebrow':'Hakkında','about.title':'Dünyalar arasında<br><em>bir ses</em>',
@@ -1944,6 +1950,7 @@ id="press">
       'footer.tagline':'Usta Ud Sanatçısı · Besteci · Eğitmen',
     },
     zh: {
+      'nav.press':'媒体评论','press.eyebrow':'媒体评论','press.title':'世界<em>评说</em>','press.intro':'来自全球媒体的100多篇评论——从纽约到东京，从阿姆斯特丹到安卡拉。','press.allReviews':'所有评论',
       'nav.bio':'简介','nav.projects':'项目','nav.albums':'专辑','nav.listen':'聆听','nav.events':'演出','nav.contact':'联系',
       'hero.location':'阿姆斯特丹 · 荷兰','hero.sub':'乌德琴大师<br>作曲家 &nbsp;·&nbsp; 教师','hero.discover':'探索','hero.listen':'立即聆听',
       'about.eyebrow':'关于','about.title':'跨越<br><em>世界</em>的声音',
@@ -1971,6 +1978,7 @@ id="press">
       'footer.tagline':'乌德琴大师 · 作曲家 · 教师',
     },
     ar: {
+      "nav.press": "الصحافة والمراجعات", "press.eyebrow": "الصحافة والمراجعات", "press.title": "ماذا يقول <em>العالم</em>", "press.intro": "أكثر من 100 مراجعة من الصحافة حول العالم — من نيويورك إلى طوكيو، ومن أمستردام إلى أنقرة.", "press.allReviews": "جميع المراجعات",
       "nav.bio": "السيرة الذاتية",
       "nav.projects": "المشاريع",
       "nav.albums": "الألبومات",
