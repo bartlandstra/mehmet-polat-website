@@ -203,10 +203,9 @@
     .hero-bg {
       position: absolute;
       inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 15%;
+      background-image: url('images/hero.webp');
+      background-size: cover;
+      background-position: center 15%;
     }
     /* Subtle right-edge fade into the dark right panel */
     .hero-photo::after {
@@ -807,6 +806,7 @@
       /* Hero: stack photo on top, text below */
       #hero { grid-template-columns: 1fr; grid-template-rows: 55vh auto; height: auto; min-height: 100vh; }
       .hero-photo { grid-row: 1; height: 55vh; }
+      .hero-bg { background-image: url('images/hero-mobile.webp'); }
       .hero-photo::after { background: linear-gradient(to bottom, transparent 60%, rgba(13,12,11,.9) 100%); }
       .hero-panel { grid-row: 2; padding: 48px 32px 64px; }
       .hero-panel::before { display: none; }
@@ -1224,10 +1224,7 @@
 <section id="hero">
   <!-- Left: photo -->
   <div class="hero-photo">
-    <picture>
-      <source srcset="images/hero-mobile.webp" media="(max-width: 960px)">
-      <img class="hero-bg" src="images/hero.webp" alt="Mehmet Polat playing the ud" width="1920" height="1280" fetchpriority="high" decoding="async">
-    </picture>
+    <div class="hero-bg" id="heroBg"></div>
   </div>
 
   <!-- Right: text panel -->
