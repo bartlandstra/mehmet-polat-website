@@ -53,10 +53,31 @@
   </script>
 
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap">
+  <!-- Self-hosted fonts: no render-blocking external request, no Google CDN dependency -->
+  <link rel="preload" href="/fonts/playfair-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
   <style>
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 300 600;
+      font-display: swap;
+      src: url('/fonts/inter-latin.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Playfair Display';
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url('/fonts/playfair-latin.woff2') format('woff2');
+    }
+    @font-face {
+      font-family: 'Playfair Display';
+      font-style: italic;
+      font-weight: 400;
+      font-display: swap;
+      src: url('/fonts/playfair-italic-latin.woff2') format('woff2');
+    }
     .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
     .skip-link:focus { position: fixed; top: 12px; left: 12px; width: auto; height: auto; padding: 8px 16px; background: var(--accent); color: #000; font-weight: 600; border-radius: 4px; z-index: 9999; }
 
