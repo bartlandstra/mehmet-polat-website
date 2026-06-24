@@ -55,7 +55,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"></noscript>
   <style>
     .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
     .skip-link:focus { position: fixed; top: 12px; left: 12px; width: auto; height: auto; padding: 8px 16px; background: var(--accent); color: #000; font-weight: 600; border-radius: 4px; z-index: 9999; }
@@ -71,7 +72,7 @@
       --accent-muted:#8a6a42;
       --text:        #f5ede0;
       --text-muted:  #a89880;
-      --text-subtle: #6d5f52;
+      --text-subtle: #9a8070;
       --border:      rgba(201,151,90,.18);
       --nav-h:       72px;
     }
@@ -1220,6 +1221,7 @@
   </button>
 </nav>
 
+<main id="main-content">
 <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
 <section id="hero">
   <!-- Left: photo -->
@@ -1434,7 +1436,8 @@
         src="https://bandcamp.com/EmbeddedPlayer/album=1018181226/size=large/bgcol=0d0c0b/linkcol=c9975a/transparent=true/"
         height="472"
         seamless
-        loading="lazy">
+        loading="lazy"
+        title="Roots in Motion – Bandcamp music player">
       </iframe>
     </div>
     <div class="listen-links fi delay-2">
@@ -1649,6 +1652,7 @@ id="press">
   </div>
 </section>
 
+</main>
 <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
 <footer>
   <div class="footer-logo">Mehmet <em>Polat</em></div>
