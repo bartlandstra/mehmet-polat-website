@@ -6,11 +6,59 @@
   <meta name="description" content="Mehmet Polat — Master ud player, composer and teacher. Internationally touring musician blending Anatolian, Jazz, and World music traditions.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://mehmetpolat.net/">
-  <title>Mehmet Polat – Master Ud Player, Composer & Teacher</title>
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+  <title>Mehmet Polat – Master Ud Player, Composer &amp; Teacher</title>
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://mehmetpolat.net/">
+  <meta property="og:title"       content="Mehmet Polat – Master Ud Player, Composer &amp; Teacher">
+  <meta property="og:description" content="Mehmet Polat — Master ud player, composer and teacher. Internationally touring musician blending Anatolian, Jazz, and World music traditions.">
+  <meta property="og:image"       content="https://mehmetpolat.net/images/hero.webp">
+  <meta property="og:locale"      content="en_GB">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Mehmet Polat – Master Ud Player, Composer &amp; Teacher">
+  <meta name="twitter:description" content="Mehmet Polat — Master ud player, composer and teacher. Internationally touring musician blending Anatolian, Jazz, and World music traditions.">
+  <meta name="twitter:image"       content="https://mehmetpolat.net/images/hero.webp">
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MusicGroup",
+    "name": "Mehmet Polat",
+    "url": "https://mehmetpolat.net/",
+    "image": "https://mehmetpolat.net/images/hero.webp",
+    "description": "Master ud player, composer and teacher. Internationally touring musician blending Anatolian, Jazz, and World music traditions.",
+    "genre": ["World Music", "Jazz", "Anatolian Music"],
+    "foundingLocation": {
+      "@type": "Place",
+      "name": "Netherlands"
+    },
+    "sameAs": [
+      "https://www.instagram.com/mehmetpolatmusic/",
+      "https://mehmetpolat.bandcamp.com/",
+      "https://open.spotify.com/artist/3N6V3e4GQHGB1THeaXNWBm",
+      "https://www.youtube.com/@MehmetPolatMusic",
+      "https://www.facebook.com/mehmetpolatmusic"
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap&display=swap" rel="stylesheet">
   <style>
+    .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .skip-link:focus { position: fixed; top: 12px; left: 12px; width: auto; height: auto; padding: 8px 16px; background: var(--accent); color: #000; font-weight: 600; border-radius: 4px; z-index: 9999; }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -1114,6 +1162,8 @@
 </head>
 <body>
 
+<a href="#hero" class="skip-link">Skip to main content</a>
+
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <button class="mobile-close" id="mobileClose">✕</button>
@@ -1171,7 +1221,7 @@
     <ul class="lang-menu" id="langMenu"></ul>
   </div>
 
-  <button class="hamburger" id="hamburger" aria-label="Menu">
+  <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -1460,7 +1510,7 @@ id="press">
       <div class="press-quote fi delay-3"><span class="press-quote-mark">“</span><p class="press-quote-text">It is amazing to contemplate how Polat continually presents himself with all manner of musical challenges, cultural collages, and emotional labyrinths, and executes the music with masterful ease.</p><p class="press-quote-source">DooBeeDooBeeDoo — New York, USA</p></div>
     </div>
     <div class="events-archive" style="margin-top:0">
-      <button class="events-archive-toggle" id="pressArchiveBtn" onclick="var b=document.getElementById('pressArchiveBody');var hidden=b.style.display==='none'||!b.style.display||b.getAttribute('data-hidden')==='1';b.style.display=hidden?'block':'none';b.setAttribute('data-hidden',hidden?'0':'1');this.querySelector('svg').style.transform=hidden?'rotate(180deg)':''" aria-expanded="false">
+      <button class="events-archive-toggle" id="pressArchiveBtn" onclick="var b=document.getElementById('pressArchiveBody');var hidden=b.style.display==='none'||!b.style.display||b.getAttribute('data-hidden')==='1';b.style.display=hidden?'block':'none';b.setAttribute('data-hidden',hidden?'0':'1');this.querySelector('svg').style.transform=hidden?'rotate(180deg)':'';this.setAttribute('aria-expanded',hidden?'true':'false');" aria-expanded="false">
         All Reviews
         <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
@@ -1676,9 +1726,10 @@ id="press">
 
   /* ── Mobile menu ── */
   const menu = document.getElementById('mobileMenu');
-  document.getElementById('hamburger').onclick = () => menu.classList.add('open');
-  document.getElementById('mobileClose').onclick  = () => menu.classList.remove('open');
-  function closeMobile() { menu.classList.remove('open'); }
+  const hamburger = document.getElementById('hamburger');
+  hamburger.onclick = () => { menu.classList.add('open'); hamburger.setAttribute('aria-expanded', 'true'); };
+  document.getElementById('mobileClose').onclick = () => { menu.classList.remove('open'); hamburger.setAttribute('aria-expanded', 'false'); };
+  function closeMobile() { menu.classList.remove('open'); hamburger.setAttribute('aria-expanded', 'false'); }
 
   /* ─────────────────────────────────────────────────────────────
      INTERNATIONALISATION
@@ -2013,8 +2064,18 @@ id="press">
   /* Dropdown open/close */
   const langSwitch = document.getElementById('langSwitch');
   const langBtn = document.getElementById('langBtn');
-  if (langBtn) langBtn.addEventListener('click', e => { e.stopPropagation(); langSwitch.classList.toggle('open'); });
-  document.addEventListener('click', e => { if (langSwitch && !langSwitch.contains(e.target)) langSwitch.classList.remove('open'); });
+  if (langBtn) langBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    const opening = !langSwitch.classList.contains('open');
+    langSwitch.classList.toggle('open');
+    langBtn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+  });
+  document.addEventListener('click', e => {
+    if (langSwitch && !langSwitch.contains(e.target)) {
+      langSwitch.classList.remove('open');
+      if (langBtn) langBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
 
   buildLangMenu();
   setLang(detectLang());

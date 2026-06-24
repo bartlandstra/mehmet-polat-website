@@ -1,0 +1,7 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://pub-581c0a7709f34ec8997d3ae9f361d1df.r2.dev https://bandcamp.com; frame-src https://bandcamp.com; connect-src 'self' https://rest.bandsintown.com https://api.web3forms.com https://mehmetpolat.net; media-src 'none'
