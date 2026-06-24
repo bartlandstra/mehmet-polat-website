@@ -52,9 +52,14 @@
   }
   </script>
 
+  <!-- Preload LCP image (hero background) -->
+  <link rel="preload" as="image" href="images/hero.webp" fetchpriority="high">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap&display=swap" rel="stylesheet">
+  <!-- Load fonts async to eliminate render-blocking -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"></noscript>
   <style>
     .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
     .skip-link:focus { position: fixed; top: 12px; left: 12px; width: auto; height: auto; padding: 8px 16px; background: var(--accent); color: #000; font-weight: 600; border-radius: 4px; z-index: 9999; }
@@ -1262,11 +1267,11 @@
         </div>
       </div>
       <div class="about-photos fi delay-1">
-        <img src="images/quartet-hans-de-vries.webp"
+        <img src="images/quartet-hans-de-vries.webp" width="600" height="899"
              alt="Mehmet Polat Quartet performing live, photo by Hans de Vries" loading="lazy">
-        <img src="images/portrait-ali-caglar.webp"
+        <img src="images/portrait-ali-caglar.webp" width="900" height="600"
              alt="Mehmet Polat portrait, photo by Ali Çağlar Erdoğan" loading="lazy">
-        <img src="images/photo-about.webp"
+        <img src="images/photo-about.webp" width="800" height="533"
              alt="Mehmet Polat playing the ud on stage" loading="lazy">
       </div>
     </div>
@@ -1448,19 +1453,19 @@
 <!-- ═══════════════════════════════ GALLERY ═══════════════════════════════ -->
 <div id="gallery">
   <div class="gal-item">
-    <img src="images/photo-gallery-2.webp"
+    <img src="images/photo-gallery-2.webp" width="800" height="533"
          alt="Mehmet Polat Quartet live on stage, photo by Joris van der Linden" loading="lazy">
   </div>
   <div class="gal-item">
-    <img src="images/photo-gallery-1.webp"
+    <img src="images/photo-gallery-1.webp" width="800" height="800"
          alt="Mehmet Polat with his ud, 2022" loading="lazy">
   </div>
   <div class="gal-item">
-    <img src="images/photo-gallery-3.webp"
+    <img src="images/photo-gallery-3.webp" width="800" height="1302"
          alt="Mehmet Polat performing, photo by Demet Temel" loading="lazy">
   </div>
   <div class="gal-item">
-    <img src="images/photo-gallery-4.webp"
+    <img src="images/photo-gallery-4.webp" width="640" height="640"
          alt="Mehmet Polat playing ud solo" loading="lazy">
   </div>
 </div>
