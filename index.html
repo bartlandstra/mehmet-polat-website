@@ -122,17 +122,18 @@
 
     .nav-links {
       display: flex;
-      gap: 36px;
+      gap: clamp(20px, 2.5vw, 36px);
       list-style: none;
     }
     .nav-links a {
       color: var(--text-muted);
       text-decoration: none;
       font-size: .78rem;
-      letter-spacing: .14em;
+      letter-spacing: .08em;
       text-transform: uppercase;
       font-weight: 500;
       transition: color .2s;
+      white-space: nowrap;
     }
     .nav-links a:hover { color: var(--accent); }
 
